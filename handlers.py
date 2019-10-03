@@ -40,3 +40,13 @@ def unjoin_user(bot, update, user_data):
 		text_message = "Нет такого пользователя:("
 	
 	update.message.reply_text(text_message, reply_markup=get_keyboard())
+
+def check_user(bot, update, user_data):
+	commit_status = check_user_in_database(database_session, update.effective_user.id)
+	
+	if commit_status == 'No user':
+		text_message = "Пока вы не пользуетесь ботом:("
+	else:
+		text_message = f'{commit_status}, вы в нашей базе!'
+	
+	update.message.reply_text(text_message, reply_markup=get_keyboard())

@@ -75,4 +75,11 @@ def delete_user_from_database(database_session, user_id):
             return 'Commited'
         except SQLAlchemyError:
             return 'Error'
+
+def check_user_in_database(database_session, user_id):
+        information_about_user = database_session.query(User).filter(User.user_id == user_id).all()
         
+        if not information_about_user:
+            return 'No user'
+        
+        return information_about_user[0].first_name

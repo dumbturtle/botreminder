@@ -41,13 +41,11 @@ def main():
 	dp.add_handler(CommandHandler("start", greet_user, pass_user_data=True))
 	dp.add_handler(RegexHandler('^(Хочу пользоваться!)$', join_user, pass_user_data=True))
 	dp.add_handler(RegexHandler('^(Расхотел)$', unjoin_user, pass_user_data=True))
-	#dp.add_handler(CommandHandler('^(Пользуюсь ли я?)$', check_user, pass_user_data=True))
+	dp.add_handler(RegexHandler('^(Проверка регистрации)$', check_user, pass_user_data=True))
+
 	
 	'''
 	dp.add_handler(anketa)
-	dp.add_handler(CommandHandler("cat", send_cat_picture, pass_user_data=True))
-	dp.add_handler(RegexHandler('^(Прислать котика)$', send_cat_picture, pass_user_data=True))
-	dp.add_handler(RegexHandler('^(Сменить аватарку)$', change_avatar, pass_user_data=True))
 	dp.add_handler(CallbackQueryHandler(inline_button_pressed))
 	dp.add_handler(MessageHandler(Filters.photo, check_user_photo, pass_user_data=True))
 	dp.add_handler(MessageHandler(Filters.contact, get_contact, pass_user_data=True))
