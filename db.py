@@ -63,3 +63,16 @@ def add_user_to_database(database_session, user_id, first_name, last_name, usern
 
         return information_about_user[0].first_name
 
+def delete_user_from_database(database_session, user_id):
+        information_about_user = database_session.query(User).filter(User.user_id == user_id).all()
+
+        if not information_about_user:
+            return 'No user'
+
+        database_session.query(User).filter(User.user_id == user_id).delete()
+        try:
+            database_session.commit()
+            return 'Commited'
+        except SQLAlchemyError:
+            return 'Error'
+        

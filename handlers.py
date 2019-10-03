@@ -28,3 +28,15 @@ def join_user(bot, update, user_data):
 		text_message = f'{commit_status}, уже есть!'
 	
 	update.message.reply_text(text_message, reply_markup=get_keyboard())
+
+def unjoin_user(bot, update, user_data):
+	commit_status = delete_user_from_database(database_session, update.effective_user.id)
+	
+	if commit_status == 'Commited':
+		text_message = "Вас больше нет в базе!"
+	elif commit_status == 'Error':
+		text_message = "Ошибка:("
+	else:
+		text_message = "Нет такого пользователя:("
+	
+	update.message.reply_text(text_message, reply_markup=get_keyboard())

@@ -40,7 +40,7 @@ def main():
 	'''
 	dp.add_handler(CommandHandler("start", greet_user, pass_user_data=True))
 	dp.add_handler(RegexHandler('^(Хочу пользоваться!)$', join_user, pass_user_data=True))
-	#dp.add_handler(CommandHandler('^(Расхотел:())$', unjoin_user, pass_user_data=True))
+	dp.add_handler(RegexHandler('^(Расхотел)$', unjoin_user, pass_user_data=True))
 	#dp.add_handler(CommandHandler('^(Пользуюсь ли я?)$', check_user, pass_user_data=True))
 	
 	'''
