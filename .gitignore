@@ -1,0 +1,24 @@
+*.pyc
+*.log
+*.txt
+settings.py
+/env/
+/lenv/
+/rocid/
+test.py
+/.idea/
+/.ipynb_checkpoints/
+/.vscode/
+*.db
+*.exe
+*.csv
+/Хлам/
+/models/
+/Исходные данные/
+/class/
+/lm/
+__pycache__/
+config.py
+!requirements.txt
+*.jpg
+downloads/

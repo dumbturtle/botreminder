@@ -1,0 +1,7 @@
+python-telegram-bot==11.1.0
+emoji==0.5.2
+PySocks
+future
+certifi
+dnspython==1.16.0
+
