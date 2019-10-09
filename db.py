@@ -30,20 +30,25 @@ class User(Base):
         return "<User('%d','%s', '%s', '%s', '%d')>" % (self.user_id, self.first_name, self.last_name, self.username, self.chat_id)
 
 
-'''
-class Data(Base):
-    __tablename__ = 'data'
+
+class Reminder_data(Base):
+    __tablename__ = 'remainders'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'),index=True)
-    text = Column(String)
+    comment = Column(String)
+    date = Column(String)
+    status = Column(String)
 
-    def __init__(self, user_id, text):
+    def __init__(self, user_id, comment, date, status):
         self.user_id = user_id
-        self.text = text
+        self.comment = comment
+        self.date = date
+        self.status = status
     
     def __repr__(self):
-        return "<Data('%s','%s')>" % (self.user_id, self.text)
+        return "<Data('%d','%s','%s','%s')>" % (self.user_id, self.comment, self.date, self.status)
 
+'''
 "user_id": effective_user.id,
 "first_name": effective_user.first_name,
 "last_name": effective_user.last_name,
@@ -52,16 +57,16 @@ class Data(Base):
 '''
 def add_user_to_database(database_session, user_id, first_name, last_name, username, chat_id):
         information_about_user = database_session.query(User).filter(User.user_id == user_id).all() 
-        if not information_about_user:                
-                information_about_user = User(user_id, first_name, last_name, username, chat_id)
-                database_session.add(information_about_user)
-                try:
-                        database_session.commit()
-                        return 'Commited'
-                except SQLAlchemyError:
-                        return 'Error'
+        if not information_about_user:
+            information_about_user = User(user_id, first_name, last_name, username, chat_id)
+            database_session.add(information_about_user)
+            try:
+                database_session.commit()
+                return 'Commited'
+            except SQLAlchemyError:
+                return 'Error'
 
-        return information_about_user[0].first_name
+        return information_about_user
 
 def delete_user_from_database(database_session, user_id):
         information_about_user = database_session.query(User).filter(User.user_id == user_id).all()
@@ -83,3 +88,16 @@ def check_user_in_database(database_session, user_id):
             return 'No user'
         
         return information_about_user[0].first_name
+
+def reminder_add_database(database_session, user_id, comment, date, status):
+        information_about_reminder = database_session.query(Reminder_data).filter(Reminder_data.user_id == user_id).all()
+        if not information_about_reminder:
+            information_about_reminder = Reminder_data(user_id, comment, date, status)
+            database_session.add(information_about_reminder)
+            try:
+                database_session.commit()
+                return 'Commited'
+            except SQLAlchemyError:
+                return 'Error'
+
+
