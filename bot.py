@@ -33,6 +33,8 @@ def main():
 			"calendar_add_day": [RegexHandler('^([1-9]|0[0-9]|1[0-9]|2[0-9]|3[0-1])$', calendar_add_day, pass_user_data=True)],
 			"calendar_add_month": [RegexHandler('^([1-9]|0[0-9]|1[0-2])$', calendar_add_month, pass_user_data=True)],
 			"calendar_add_year": [RegexHandler('^([0-9][0-9][0-9][0-9])$', calendar_add_year, pass_user_data=True)],
+			"calendar_add_hours": [RegexHandler('^([0-9]|[0-2][0-9])$', calendar_add_hours, pass_user_data=True)],
+			"calendar_add_minutes": [RegexHandler('^([0-9]|[0-5][0-9])$', calendar_add_minutes, pass_user_data=True)],
 			"reminder_add_comment": [MessageHandler(Filters.text, reminder_add_comment, pass_user_data=True),
 								  CommandHandler('skip', reminder_skip_comment, pass_user_data=True)]
 			},

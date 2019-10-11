@@ -8,6 +8,7 @@ import settings, logging, os
 
 from keyboards import *
 from db import *
+from utils import check_date
 
 
 def greet_user(bot, update, user_data):
@@ -66,23 +67,9 @@ def reminder_add(bot, update, user_data):
 
 def reminder_add_date(bot, update, user_data):
 	user_data['date'] = update.message.text
-	text_message = 'Введите комментарий!'
-	update.message.reply_text(text_message , reply_markup=ReplyKeyboardRemove())
-	return "reminder_add_comment"
-
-def reminder_add_comment(bot, update, user_data):
-	text_message = 'Записываю'
-	user_data['comment'] = update.message.text
-	update.message.reply_text(text_message, reply_markup=ReplyKeyboardRemove())
-	print(user_data)
-	return ConversationHandler.END
-
-def reminder_skip_comment(bot, update, user_data):
-	text_message = 'Записываю'
-	user_data['comment'] = 'Нет комментария!'
-	update.message.reply_text(text_message, reply_markup=ReplyKeyboardRemove())
-	print(user_data)
-	return ConversationHandler.END
+	text_message = 'Введите час!'
+	update.message.reply_text(text_message , reply_markup=reminder_add_digital_period_keyboard('hours'))
+	return "calendar_add_hours"
 
 def calendar_add_date(bot, update, user_data):
 	text_message = 'Введите число!'
@@ -103,13 +90,45 @@ def calendar_add_month(bot, update, user_data):
 
 def calendar_add_year(bot, update, user_data):
 	user_data['year'] = update.message.text
-	user_data['date'] = f'{user_data["day"]}-{user_data["month"]}-{user_data["year"]}'
-	print(user_data)
-	text_message = 'Введите комментарий!'
-	update.message.reply_text(text_message, reply_markup=ReplyKeyboardRemove())
-	return "reminder_add_comment"
-  
+	text_message = 'Введите час!'
+	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard('hours'))
+	return "calendar_add_hours"
+	
 
+def calendar_add_hours(bot, update, user_data):
+	user_data['hours'] = update.message.text
+	text_message = 'Введите минуты!'
+	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard('minutes'))
+	return "calendar_add_minutes"
+
+def calendar_add_minutes(bot, update, user_data):
+	user_data['minutes'] = update.message.text
+	if "day" in user_data:
+		user_data['date'] = f'{user_data["day"]}-{user_data["month"]}-{user_data["year"]} {user_data["hours"]}:{user_data["minutes"]}'
+	else: 
+		user_data['date'] = f'{user_data["date"]} {user_data["hours"]}:{user_data["minutes"]}'
+	date_status = check_date(user_data["date"]) 
+	if date_status == True:
+		text_message = 'Введите комментарий'
+		update.message.reply_text(text_message, reply_markup=ReplyKeyboardRemove())
+		return "reminder_add_comment"
+	text_message = 'Не верно введена дата или время! Ошибка: {}. Введите дату и время напоминания заново.'.format(date_status)
+	update.message.reply_text(text_message, reply_markup=reminder_add_day_keyboard())
+	return "reminder_add_date"
+
+def reminder_add_comment(bot, update, user_data):
+	user_data['comment'] = update.message.text
+	text_message = f'Записываю! Дата:{user_data["date"]} Комментарий:{user_data["comment"]}'
+	update.message.reply_text(text_message, reply_markup=reminder_keyboard())
+	print(user_data)
+	return ConversationHandler.END
+
+def reminder_skip_comment(bot, update, user_data):
+	text_message = 'Записываю'
+	user_data['comment'] = 'Нет комментария!'
+	update.message.reply_text(text_message, reply_markup=reminder_keyboard())
+	print(user_data)
+	return ConversationHandler.END
 
 def dontknow(bot, update, user_data):
 	update.message.reply_text("Не понимаю!", reply_markup=reminder_keyboard())

@@ -27,13 +27,35 @@ def reminder_add_day_keyboard():
 
 def reminder_add_digital_period_keyboard(period):
 	if period == 'day':
-		key = [[str(x) for x in range(1,12)],
-			   [str(x) for x in range(12,24)],
-			   [str(x) for x in range(24,32)]]
+		key = [[str(x) for x in range(1,11)],
+			   [str(x) for x in range(11,22)],
+			   [str(x) for x in range(22,32)]]
 	elif period == 'month':
-		key = [[str(x) for x in range(1,13)]]
+		key = [[str(x) for x in range(1,7)],
+				[str(x) for x in range(7,13)]]
 	elif period == 'year':
 		key = [[str(x) for x in range(2019,2024)]]
+	elif period == 'hours':
+		key = [[str(x) for x in range(0,9)	],
+			   [str(x) for x in range(9,18)	],
+			   [str(x) for x in range(18,24)]]
+	elif period == 'minutes':
+		key = [[str(x) for x in range(0,60,15)]]
+
 	digital_period_keyboard = ReplyKeyboardMarkup(key, resize_keyboard=False)
 	return digital_period_keyboard
 
+def reminder_add_digital_period_keyboard_d(start, end, step):
+	end_range = end // step
+	print(end_range)
+	key_board = []
+	for key in range(start, end_range):
+		print('Цикл',key)
+		key_board.append([str(number) for number in range(key*step,(key*step)+step)])
+	key_board.append([str(number) for number in range(end_range*step, end)])
+	print(key_board)
+
+
+
+if __name__ == "__main__":
+	print(reminder_add_digital_period_keyboard_d(1,12,9))
