@@ -1,7 +1,7 @@
 *.pyc
 *.log
 *.txt
-settings.py
+connect_settings.py
 /env/
 /lenv/
 /rocid/

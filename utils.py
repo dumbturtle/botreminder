@@ -7,7 +7,7 @@ def check_date(date):
 	try:
 		date_for_check = datetime.strptime(date, "%d-%m-%Y %H:%M")
 		if date_for_check > today_date:
-			return True
+			return date_for_check
 		else:
 			return 'False: date in paste'
 	except ValueError as error:

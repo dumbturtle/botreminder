@@ -8,8 +8,7 @@ import settings
 def starting_keyboard():
 	#join_button = KeyboardButton('Прислать контакты', request_contact=True)
 	#location_button = KeyboardButton('Прислать координаты', request_location=True)
-	starting_keyboard = ReplyKeyboardMarkup([['Хочу пользоваться!', 'Добавить напоминание', 
-										'Расхотел']], resize_keyboard=True)
+	starting_keyboard = ReplyKeyboardMarkup([['Хочу пользоваться!', 'Расхотел']], resize_keyboard=True)
 	return starting_keyboard   	  
 
 def reminder_keyboard():
