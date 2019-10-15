@@ -6,8 +6,8 @@ import settings, logging, os
 
 from datetime import datetime
 from keyboards import *
-from db import *
-from utils import check_date
+from db import database_session
+from utils import *
 
 
 def greet_user(bot, update, user_data):
@@ -53,40 +53,47 @@ def reminder_add(bot, update, user_data):
 	update.message.reply_text(text_message, reply_markup=reminder_add_day_keyboard())
 	return "reminder_add_date"
 
+def reminds_list(bot, update, user_data):
+	list_of_reminds = reminds_list_database(database_session, update.effective_user.id)
+	update.message.reply_text(settings.REMINDER_ALL_LIST_MESSAGE , reply_markup=reminder_keyboard())
+	for remind in list_of_reminds:
+		text_message = settings.REMINDER_LIST_MESSAGE.format(remind.date_remind, remind.comment, remind.status)
+		update.message.reply_text(text_message, reply_markup=reminder_keyboard())
+
 def reminder_add_date(bot, update, user_data):
 	user_data['date'] = update.message.text
 	text_message = settings.ENTER_HOURS
-	update.message.reply_text(text_message , reply_markup=reminder_add_digital_period_keyboard('hours'))
+	update.message.reply_text(text_message , reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1))
 	return "calendar_add_hours"
 
 def calendar_add_date(bot, update, user_data):
 	text_message = settings.ENTER_DAY
-	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard('day'))
+	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(1, 31, 10, 1))
 	return "calendar_add_day"
 
 def calendar_add_day(bot, update, user_data):
 	text_message = settings.ENTER_MONTH
-	user_data['day '] = update.message.text
-	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard('month'))
+	user_data['day'] = update.message.text
+	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(1, 12, 10, 1))
 	return "calendar_add_month"
 
 def calendar_add_month(bot, update, user_data):
 	text_message = settings.ENTER_YEAR
 	user_data['month'] = update.message.text
-	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard('year'))
+	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(2019, 2022, 1, 1))
 	return "calendar_add_year"
 
 def calendar_add_year(bot, update, user_data):
 	user_data['year'] = update.message.text
 	text_message = settings.ENTER_HOURS
-	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard('hours'))
+	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1))
 	return "calendar_add_hours"
 	
 
 def calendar_add_hours(bot, update, user_data):
 	user_data['hours'] = update.message.text
 	text_message = settings.ENTER_MINUTES
-	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard('minutes'))
+	update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(0, 59, 10, 5))
 	return "calendar_add_minutes"
 
 def calendar_add_minutes(bot, update, user_data):
@@ -97,7 +104,7 @@ def calendar_add_minutes(bot, update, user_data):
 		user_data['date'] = f'{user_data["date"]} {user_data["hours"]}:{user_data["minutes"]}'
 	date_status = check_date(user_data["date"]) 
 	if isinstance(date_status, datetime):
-		user_data["date"] = date_status
+		user_data['date'] = date_status
 		text_message = settings.ENTER_COMMENT
 		update.message.reply_text(text_message, reply_markup=ReplyKeyboardRemove())
 		return "reminder_add_comment"
@@ -118,6 +125,7 @@ def reminder_skip_comment(bot, update, user_data):
 	update.message.reply_text(text_message, reply_markup=reminder_keyboard())
 	print(user_data)
 	return ConversationHandler.END
+
 
 def dontknow(bot, update, user_data):
 	update.message.reply_text(settings.DONKNOW_TEXT, reply_markup=reminder_keyboard())

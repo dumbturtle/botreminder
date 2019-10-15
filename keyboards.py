@@ -24,7 +24,7 @@ def reminder_add_day_keyboard():
 										'Ввести дату']], resize_keyboard=True)
 	return reminder_add_day_keyboard
 
-def reminder_add_digital_period_keyboard(period):
+def reminder_add_digital_period_keyboard_a(period):
 	if period == 'day':
 		key = [[str(x) for x in range(1,11)],
 			   [str(x) for x in range(11,22)],
@@ -44,17 +44,15 @@ def reminder_add_digital_period_keyboard(period):
 	digital_period_keyboard = ReplyKeyboardMarkup(key, resize_keyboard=False)
 	return digital_period_keyboard
 
-def reminder_add_digital_period_keyboard_d(start, end, step):
-	end_range = end // step
-	print(end_range)
-	key_board = []
-	for key in range(start, end_range):
-		print('Цикл',key)
-		key_board.append([str(number) for number in range(key*step,(key*step)+step)])
-	key_board.append([str(number) for number in range(end_range*step, end)])
-	print(key_board)
-
+def reminder_add_digital_period_keyboard(start, end, keyboard_long, keyboard_step):
+	end += 1
+	key = []
+	for keys in range(start, end, keyboard_long):
+  		key.append([ f'{key}' for key in range(keys, keys + keyboard_long, keyboard_step)  if key < end])
+	#return key
+	digital_period_keyboard = ReplyKeyboardMarkup(key, resize_keyboard=False)
+	return digital_period_keyboard
 
 
 if __name__ == "__main__":
-	print(reminder_add_digital_period_keyboard_d(1,12,9))
+	print(reminder_add_digital_period_keyboard(0,59,10,15))

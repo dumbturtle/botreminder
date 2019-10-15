@@ -22,3 +22,6 @@ NO_USER = 'Нет такого пользователя:('
 ALREADY_EXISTS_USER = '{}, уже есть!'
 RUN_BOT = 'Бот запускается'
 REMINDER_STATUS_ON_ADD = 'active'
+
+REMINDER_ALL_LIST_MESSAGE = 'Список напоминаний:'
+REMINDER_LIST_MESSAGE = 'Дата:{}.Комментарий:{}. Статус {}.'

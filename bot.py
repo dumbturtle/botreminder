@@ -48,7 +48,7 @@ def main():
 	dp.add_handler(CommandHandler("start", greet_user, pass_user_data=True))
 	dp.add_handler(RegexHandler('^(Хочу пользоваться!)$', join_user, pass_user_data=True))
 	dp.add_handler(RegexHandler('^(Расхотел)$', unjoin_user, pass_user_data=True))
-	#dp.add_handler(RegexHandler('^(Проверка регистрации)$', check_user, pass_user_data=True))
+	dp.add_handler(RegexHandler('^(Список напоминаний)$', reminds_list, pass_user_data=True))
 	dp.add_handler(reminder_create)
 	dp.add_handler(MessageHandler(Filters.text, dontknow, pass_user_data=True))
 	'''
