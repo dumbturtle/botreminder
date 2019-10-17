@@ -6,12 +6,11 @@ import settings, logging, os
 
 from datetime import datetime
 from keyboards import *
-from db import database_session
 from utils import *
 
 
 def greet_user(bot, update, user_data):
-	commit_status = check_user_in_database(database_session, update.effective_user.id)
+	commit_status = check_user_in_database(update.effective_user.id)
 	if commit_status == "No user":
 		message_text = settings.JOIN_TEXT
 		update.message.reply_text(message_text, reply_markup=starting_keyboard())
@@ -20,7 +19,7 @@ def greet_user(bot, update, user_data):
 		update.message.reply_text(message_text, reply_markup=reminder_keyboard())
 
 def join_user(bot, update, user_data):
-	commit_status  = add_user_to_database(database_session, update.effective_user.id, 
+	commit_status  = add_user_to_database(update.effective_user.id, 
 			update.effective_user.first_name,
 			update.effective_user.last_name,
 			update.effective_user.username,
@@ -37,7 +36,7 @@ def join_user(bot, update, user_data):
 	update.message.reply_text(text_message, reply_markup=reminder_keyboard())
 
 def unjoin_user(bot, update, user_data):
-	commit_status = delete_user_from_database(database_session, update.effective_user.id)
+	commit_status = delete_user_from_database(update.effective_user.id)
 	
 	if commit_status == 'Commited':
 		text_message = settings.REMOVE_USER
@@ -54,11 +53,21 @@ def reminder_add(bot, update, user_data):
 	return "reminder_add_date"
 
 def reminds_list(bot, update, user_data):
-	list_of_reminds = reminds_list_database(database_session, update.effective_user.id)
-	update.message.reply_text(settings.REMINDER_ALL_LIST_MESSAGE , reply_markup=reminder_keyboard())
-	for remind in list_of_reminds:
-		text_message = settings.REMINDER_LIST_MESSAGE.format(remind.date_remind, remind.comment, remind.status)
+	text_message = ''
+	list_of_reminds = reminds_list_database(update.effective_user.id)
+	keys_list_of_reminds = [f'{key.id}' for key in list_of_reminds]	
+	update.message.reply_text(settings.REMINDER_ALL_LIST_MESSAGE, reply_markup=reminder_keyboard())
+	if update.message.text == settings.REMINDER_ALL_LIST_MESSAGE:
+		for remind in list_of_reminds:
+			text_message += settings.REMINDER_LIST_MESSAGE.format(remind.id, remind.date_remind, remind.comment, remind.status)
 		update.message.reply_text(text_message, reply_markup=reminder_keyboard())
+		return ConversationHandler.END
+	else:
+		for remind in list_of_reminds:
+			text_message += settings.REMINDER_LIST_MESSAGE.format(remind.id, remind.date_remind, remind.comment, remind.status)
+		update.message.reply_text(text_message)
+		update.message.reply_text(settings.CHOOSE_REMIND_FOR_DELETE, reply_markup=remind_list_for_delete_keyboard(keys_list_of_reminds))
+		return "confirm_remind_for_delete"
 
 def reminder_add_date(bot, update, user_data):
 	user_data['date'] = update.message.text
@@ -114,7 +123,7 @@ def calendar_add_minutes(bot, update, user_data):
 
 def reminder_add_comment(bot, update, user_data):
 	user_data['comment'] = update.message.text
-	commit_status = reminder_add_database(database_session, update.effective_user.id, user_data['comment'], user_data['date'], settings.REMINDER_STATUS_ON_ADD)
+	commit_status = reminder_add_database(update.effective_user.id, user_data['comment'], user_data['date'], settings.REMINDER_STATUS_ON_ADD)
 	text_message = settings.COMMIT_WITH_COMMENT.format(user_data["date"], user_data["comment"], commit_status)
 	update.message.reply_text(text_message, reply_markup=reminder_keyboard())
 	return ConversationHandler.END
@@ -126,6 +135,36 @@ def reminder_skip_comment(bot, update, user_data):
 	print(user_data)
 	return ConversationHandler.END
 
+def confirm_remind_for_delete(bot, update, user_data):
+	user_data["number_remind_for_delete"] = update.message.text
+	remind_for_delete = remind_list_for_delete(user_data["number_remind_for_delete"])
+	if remind_for_delete == "No remind":
+		text_message = settings.NO_REMIND
+		update.message.reply_text(text_message, reply_markup=reminder_keyboard())
+	else:
+		full_remind_for_delete = settings.REMINDER_LIST_MESSAGE.format(remind_for_delete.id, remind_for_delete.date_remind, remind_for_delete.comment, remind_for_delete.status)
+		text_message = settings.CONFIRM_REMIND_FOR_DELETE.format(full_remind_for_delete)
+		update.message.reply_text(text_message, reply_markup= remind_confirm_for_delete_keyboard())
+		return "commit_remind_for_delete"
+
+def commit_remind_for_delete(bot, update, user_data):
+	commit_status = remind_delete(user_data["number_remind_for_delete"])
+	
+	if commit_status == 'Commited':
+		text_message = settings.REMOVE_REMIND_FOR_DELETE
+	elif commit_status == 'Error':
+		text_message = settings.ADD_ERROR
+	else:
+		text_message = settings.NO_REMIND
+	
+	update.message.reply_text(text_message, reply_markup=reminder_keyboard())
+	return ConversationHandler.END
+
+def cancel_remind_for_delete(bot, update, user_data):
+	update.message.reply_text(settings.CANCEL_REMIND_FOR_DELETE, reply_markup=reminder_keyboard())
+	return ConversationHandler.END
 
 def dontknow(bot, update, user_data):
 	update.message.reply_text(settings.DONKNOW_TEXT, reply_markup=reminder_keyboard())
+	return ConversationHandler.END
+

@@ -6,7 +6,6 @@ import logging
 import settings
 import connect_settings
 
-from keyboards import *
 from handlers import *
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO, filename='bot.log')
@@ -44,23 +43,24 @@ def main():
 			pass_user_data=True
 			)]
 	)
+	reminder_delete = ConversationHandler(
+		entry_points=[RegexHandler('^(Удалить напоминание)$', reminds_list, pass_user_data=True)],
+		states={
+			"confirm_remind_for_delete": [RegexHandler('^(\\d)$', confirm_remind_for_delete, pass_user_data=True)],
+			"commit_remind_for_delete": [RegexHandler('^(Да)$', commit_remind_for_delete, pass_user_data=True)]
+			},
+		fallbacks = [RegexHandler('^(Нет)$', cancel_remind_for_delete, pass_user_data=True), 
+					MessageHandler(Filters.text | Filters.video | Filters.photo | Filters.document, dontknow, pass_user_data=True)]
+	)
 	
 	dp.add_handler(CommandHandler("start", greet_user, pass_user_data=True))
+	dp.add_handler(reminder_create)
+	dp.add_handler(reminder_delete)
 	dp.add_handler(RegexHandler('^(Хочу пользоваться!)$', join_user, pass_user_data=True))
 	dp.add_handler(RegexHandler('^(Расхотел)$', unjoin_user, pass_user_data=True))
 	dp.add_handler(RegexHandler('^(Список напоминаний)$', reminds_list, pass_user_data=True))
-	dp.add_handler(reminder_create)
+
 	dp.add_handler(MessageHandler(Filters.text, dontknow, pass_user_data=True))
-	'''
-	dp.add_handler(CallbackQueryHandler(inline_button_pressed))
-	dp.add_handler(MessageHandler(Filters.photo, check_user_photo, pass_user_data=True))
-	dp.add_handler(MessageHandler(Filters.contact, get_contact, pass_user_data=True))
-	dp.add_handler(MessageHandler(Filters.location, get_location, pass_user_data=True))
-	dp.add_handler(CommandHandler("sub",subscribe))  
-	dp.add_handler(CommandHandler("unsub",unsubscribe))
-	dp.add_handler(CommandHandler("alarm",set_alarm, pass_args=True, pass_job_queue=True))
-	dp.add_handler(MessageHandler(Filters.text, talk_to_me, pass_user_data=True))
-	'''
 	mybot.start_polling()
 	mybot.idle()
 

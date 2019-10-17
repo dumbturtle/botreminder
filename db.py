@@ -46,15 +46,7 @@ class Reminder_data(Base):
 		self.status = status
 
 	def __repr__(self):
-		return "<Data('%d','%s','%s','%s')>" % (self.user_id, self.comment, self.date_remind, self.status)
-	
-'''
-"user_id": effective_user.id,
-"first_name": effective_user.first_name,
-"last_name": effective_user.last_name,
-"username": effective_user.username,
-"chat_id": message.chat_id
-'''
+		return "<Data('%d', '%d', '%s', '%s', '%s')>" % (self.id, self.user_id, self.comment, self.date_remind, self.status)
 
 
 
