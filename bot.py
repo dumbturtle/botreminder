@@ -46,7 +46,7 @@ def main():
 	reminder_delete = ConversationHandler(
 		entry_points=[RegexHandler('^(Удалить напоминание)$', reminds_list, pass_user_data=True)],
 		states={
-			"confirm_remind_for_delete": [RegexHandler('^(\\d)$', confirm_remind_for_delete, pass_user_data=True)],
+			"confirm_remind_for_delete": [RegexHandler('^([0-9]|[0-9][0-9])$', confirm_remind_for_delete, pass_user_data=True)],
 			"commit_remind_for_delete": [RegexHandler('^(Да)$', commit_remind_for_delete, pass_user_data=True)]
 			},
 		fallbacks = [RegexHandler('^(Нет)$', cancel_remind_for_delete, pass_user_data=True), 
