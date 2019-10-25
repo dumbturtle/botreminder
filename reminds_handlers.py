@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 import logging
 import schedule
+import settings
 
 from db import database_session, User, Reminder_data
 
@@ -15,7 +16,6 @@ logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=loggi
 bot_proxy = utils.request.Request(proxy_url=connect_settings.PROXY_REMINDS_HANDLERS_PROXY, 
 								  urllib3_proxy_kwargs=connect_settings.PROXY_REMINDS_HANDLERS_ACCOUNT)
 reminder_bot = Bot(token=connect_settings.API_KEY, request=bot_proxy)
-	#logging.info(settings.RUN_BOT)
 
 
 def check_time_reminder():
@@ -24,12 +24,13 @@ def check_time_reminder():
 		if reminder.date_remind.strftime("%d-%m-%Y %H:%M") == datetime.now().strftime("%d-%m-%Y %H:%M"):
 			sending_notification_reminder(reminder.user_id, reminder.date_remind, reminder.comment)
 			change_reminder_status(reminder.id)
-			logging.warning(f'СРАБОТКА:{reminder.id} : {reminder.date_remind}')
-		logging.info(f'Проведена проверка напоминания:{reminder.id} : {reminder.date_remind}')
+			logging.warning(settings.REMIND_RUNNINGOUT.format(reminder.id, reminder.date_remind))
+		else:
+			logging.info(settings.REMIND_CHECK.format(reminder.id, reminder.date_remind))
 
 def sending_notification_reminder(user_id, reminder_date, comment):
 	user_information = database_session.query(User).filter(User.id == user_id).first()
-	message_text = f'НАПОМИНАНИЕ!!! Дата: {reminder_date}. Комментарий: {comment}'
+	message_text = settings.REMIND_MESSAGE_TEXT.format(reminder_date, comment)
 	reminder_bot.sendMessage(chat_id=user_information.chat_id ,text=message_text)
 
 def change_reminder_status(remind_id):
