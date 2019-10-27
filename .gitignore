@@ -1,6 +1,7 @@
 *.pyc
 *.log
 *.txt
+*.cfg
 connect_settings.py
 /env/
 /lenv/
