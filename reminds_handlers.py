@@ -5,15 +5,8 @@ from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 from telegram import Bot, utils
 
-import settings.connect_settings
-import settings.settings 
+from settings import connect_settings, settings
 from database.db import database_session, User, Reminder_data
-
-
-logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO, filename='logs\reminds_handlers.log')
-bot_proxy = utils.request.Request(proxy_url=connect_settings.PROXY_REMINDS_HANDLERS_PROXY,
-                                  urllib3_proxy_kwargs=connect_settings.PROXY_REMINDS_HANDLERS_ACCOUNT)
-reminder_bot = Bot(token=connect_settings.API_KEY, request=bot_proxy)
 
 
 def check_time_reminder():
@@ -29,6 +22,9 @@ def check_time_reminder():
 
 def sending_notification_reminder(user_id, reminder_date, comment):
     user_information = database_session.query(User).filter(User.id == user_id).first()
+    bot_proxy = utils.request.Request(proxy_url=connect_settings.PROXY_REMINDS_HANDLERS_PROXY,
+                                  urllib3_proxy_kwargs=connect_settings.PROXY_REMINDS_HANDLERS_ACCOUNT)
+    reminder_bot = Bot(token=connect_settings.API_KEY, request=bot_proxy)
     message_text = settings.REMIND_MESSAGE_TEXT.format(reminder_date, comment)
     reminder_bot.sendMessage(chat_id=user_information.chat_id, text=message_text)
 
@@ -42,12 +38,12 @@ def change_reminder_status(remind_id):
         return 'Error'
 
 
-def main():
-    schedule.every(50).seconds.do(check_time_reminder)
-
+def main_reminds_handlers():
+    logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO, filename='logs/reminds_handlers.log')
+    schedule.every().minute.at(":01").do(check_time_reminder)
     while True:
         schedule.run_pending()
 
 
 if __name__ == "__main__":
-    main()
+    main_reminds_handlers()
