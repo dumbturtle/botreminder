@@ -20,20 +20,14 @@ def check_time_reminder():
                 reminder.date_remind,
                 reminder.comment)
             change_reminder_status(reminder.id)
-            logging.warning(settings.REMIND_RUNNINGOUT.format(
-                reminder.id,
-                reminder.date_remind))
-        else:
-            logging.info(settings.REMIND_CHECK.format(
-                reminder.id, reminder.date_remind))
 
 
 def sending_notification_reminder(user_id, reminder_date, comment):
     user_information = database_session.query(
         User).filter(User.id == user_id).first()
     bot_proxy = utils.request.Request(
-        proxy_url=connect_settings.PROXY_REMINDS_HANDLERS_PROXY,
-        urllib3_proxy_kwargs=connect_settings.PROXY_REMINDS_HANDLERS_ACCOUNT
+        proxy_url=connect_settings.PROXY,
+        urllib3_proxy_kwargs=connect_settings.PROXY_ACCOUNT
         )
     reminder_bot = Bot(
         token=connect_settings.API_KEY,
@@ -60,9 +54,6 @@ def change_reminder_status(remind_id):
 
 
 def main_reminds_handlers():
-    logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
-                        level=logging.INFO,
-                        filename='logs/reminds_handlers.log')
     schedule.every().minute.at(":01").do(check_time_reminder)
     while True:
         schedule.run_pending()

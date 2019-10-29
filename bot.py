@@ -2,25 +2,20 @@ import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters,\
     RegexHandler, ConversationHandler, CallbackQueryHandler
 
-from settings import connect_settings,settings
+from settings import connect_settings, settings
 from bothandlers.handlers import greet_user, join_user, reminder_add,\
     reminds_list, reminder_add_date, calendar_add_date,\
     calendar_add_day, calendar_add_month, calendar_add_year,\
     calendar_add_hours, calendar_add_minutes, reminder_add_comment,\
-    reminder_skip_comment, confirm_remind_for_delete, commit_remind_for_delete,\
-    cancel_remind_for_delete, dontknow, unjoin_user
-from reminds_handlers import main_reminds_handlers
-
-logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO,
-                    filename='logs/bot.log')
+    reminder_skip_comment, confirm_remind_for_delete,\
+    commit_remind_for_delete, cancel_remind_for_delete, dontknow, unjoin_user
 
 
 def main():
     mybot = Updater(
-        connect_settings.API_KEY,
-        request_kwargs=connect_settings.PROXY)
-    logging.info(settings.RUN_BOT)
+        connect_settings.API_KEY, request_kwargs={
+            'proxy_url': connect_settings.PROXY,
+            'urllib3_proxy_kwargs': connect_settings.PROXY_ACCOUNT})
     dp = mybot.dispatcher
     reminder_create = ConversationHandler(
         entry_points=[
@@ -34,7 +29,8 @@ def main():
                     '^(Ввести дату)$',
                     calendar_add_date,
                     pass_user_data=True),
-                    RegexHandler('^([0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9])$',
+                RegexHandler(
+                    '^([0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9])$',
                     reminder_add_date,
                     pass_user_data=True)],
             "calendar_add_day": [
