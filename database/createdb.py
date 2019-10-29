@@ -1,4 +1,4 @@
-from db import Base
+from modeldb import Base
 from sqlalchemy import create_engine
 
 

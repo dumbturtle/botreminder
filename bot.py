@@ -2,8 +2,7 @@ import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters,\
     RegexHandler, ConversationHandler, CallbackQueryHandler
 
-from settings import connect_settings
-from settings import settings
+from settings import connect_settings,settings
 from bothandlers.handlers import greet_user, join_user, reminder_add,\
     reminds_list, reminder_add_date, calendar_add_date,\
     calendar_add_day, calendar_add_month, calendar_add_year,\
@@ -46,7 +45,7 @@ def main():
             "calendar_add_month": [
                 RegexHandler(
                     '^([1-9]|0[0-9]|1[0-2])$',
-                    calendar_add_month, 
+                    calendar_add_month,
                     pass_user_data=True)],
             "calendar_add_year": [
                 RegexHandler(

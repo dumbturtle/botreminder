@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from telegram import Bot, utils
 
 from settings import connect_settings, settings
-from database.db import database_session, User, Reminder_data
+from database.modeldb import database_session, User, Reminder_data
 
 
 def check_time_reminder():

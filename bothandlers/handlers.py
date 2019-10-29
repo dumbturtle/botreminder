@@ -80,7 +80,8 @@ def reminds_list(bot, update, user_data):
                 remind.id, remind.date_remind, remind.comment, remind.status)
         update.message.reply_text(text_message)
         update.message.reply_text(settings.CHOOSE_REMIND_FOR_DELETE,
-                                  reply_markup=remind_list_for_delete_keyboard(keys_list_of_reminds))
+            reply_markup=remind_list_for_delete_keyboard(keys_list_of_reminds)
+            )
         return "confirm_remind_for_delete"
 
 
@@ -88,14 +89,18 @@ def reminder_add_date(bot, update, user_data):
     user_data['date'] = update.message.text
     text_message = settings.ENTER_HOURS
     update.message.reply_text(
-        text_message, reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1))
+        text_message,
+        reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1)
+        )
     return "calendar_add_hours"
 
 
 def calendar_add_date(bot, update, user_data):
     text_message = settings.ENTER_DAY
     update.message.reply_text(
-        text_message, reply_markup=reminder_add_digital_period_keyboard(1, 31, 10, 1))
+        text_message,
+        reply_markup=reminder_add_digital_period_keyboard(1, 31, 10, 1)
+        )
     return "calendar_add_day"
 
 
@@ -103,7 +108,9 @@ def calendar_add_day(bot, update, user_data):
     text_message = settings.ENTER_MONTH
     user_data['day'] = update.message.text
     update.message.reply_text(
-        text_message, reply_markup=reminder_add_digital_period_keyboard(1, 12, 10, 1))
+        text_message,
+        reply_markup=reminder_add_digital_period_keyboard(1, 12, 10, 1)
+        )
     return "calendar_add_month"
 
 
@@ -111,7 +118,9 @@ def calendar_add_month(bot, update, user_data):
     text_message = settings.ENTER_YEAR
     user_data['month'] = update.message.text
     update.message.reply_text(
-        text_message, reply_markup=reminder_add_digital_period_keyboard(2019, 2022, 1, 1))
+        text_message,
+        reply_markup=reminder_add_digital_period_keyboard(2019, 2022, 1, 1)
+        )
     return "calendar_add_year"
 
 
@@ -119,7 +128,9 @@ def calendar_add_year(bot, update, user_data):
     user_data['year'] = update.message.text
     text_message = settings.ENTER_HOURS
     update.message.reply_text(
-        text_message, reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1))
+        text_message,
+        reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1)
+        )
     return "calendar_add_hours"
 
 
@@ -127,16 +138,24 @@ def calendar_add_hours(bot, update, user_data):
     user_data['hours'] = update.message.text
     text_message = settings.ENTER_MINUTES
     update.message.reply_text(
-        text_message, reply_markup=reminder_add_digital_period_keyboard(0, 59, 10, 5))
+        text_message,
+        reply_markup=reminder_add_digital_period_keyboard(0, 59, 10, 5)
+        )
     return "calendar_add_minutes"
 
 
 def calendar_add_minutes(bot, update, user_data):
     user_data['minutes'] = update.message.text
     if "day" in user_data:
-        user_data['date'] = f'{user_data["day"]}-{user_data["month"]}-{user_data["year"]} {user_data["hours"]}:{user_data["minutes"]}'
+        user_data['date'] = f'{user_data["day"]}-\
+                              {user_data["month"]}-\
+                              {user_data["year"]} \
+                              {user_data["hours"]}:\
+                              {user_data["minutes"]}'
     else:
-        user_data['date'] = f'{user_data["date"]} {user_data["hours"]}:{user_data["minutes"]}'
+        user_data['date'] = f'{user_data["date"]} \
+                              {user_data["hours"]}:\
+                              {user_data["minutes"]}'
     date_status = check_date(user_data["date"])
     if isinstance(date_status, datetime):
         user_data['date'] = date_status
@@ -153,7 +172,11 @@ def calendar_add_minutes(bot, update, user_data):
 def reminder_add_comment(bot, update, user_data):
     user_data['comment'] = update.message.text
     commit_status = reminder_add_database(
-        update.effective_user.id, user_data['comment'], user_data['date'], settings.REMINDER_STATUS_ON_ADD)
+        update.effective_user.id,
+        user_data['comment'],
+        user_data['date'],
+        settings.REMINDER_STATUS_ON_ADD
+        )
     text_message = settings.COMMIT_WITH_COMMENT.format(
         user_data["date"], user_data["comment"], commit_status)
     update.message.reply_text(text_message, reply_markup=reminder_keyboard())
@@ -178,11 +201,17 @@ def confirm_remind_for_delete(bot, update, user_data):
             text_message, reply_markup=reminder_keyboard())
     else:
         full_remind_for_delete = settings.REMINDER_LIST_MESSAGE.format(
-            remind_for_delete.id, remind_for_delete.date_remind, remind_for_delete.comment, remind_for_delete.status)
+            remind_for_delete.id,
+            remind_for_delete.date_remind,
+            remind_for_delete.comment,
+            remind_for_delete.status
+            )
         text_message = settings.CONFIRM_REMIND_FOR_DELETE.format(
             full_remind_for_delete)
         update.message.reply_text(
-            text_message, reply_markup=remind_confirm_for_delete_keyboard())
+            text_message,
+            reply_markup=remind_confirm_for_delete_keyboard()
+            )
         return "commit_remind_for_delete"
 
 
