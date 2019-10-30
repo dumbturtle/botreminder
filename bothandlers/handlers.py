@@ -147,15 +147,15 @@ def calendar_add_hours(bot, update, user_data):
 def calendar_add_minutes(bot, update, user_data):
     user_data['minutes'] = update.message.text
     if "day" in user_data:
-        user_data['date'] = f'{user_data["day"]}-\
-                              {user_data["month"]}-\
-                              {user_data["year"]} \
-                              {user_data["hours"]}:\
-                              {user_data["minutes"]}'
+        user_data['date'] = '{}-{}-{} {}:{}'.format(user_data["day"],
+                                                        user_data["month"],
+                                                        user_data["year"],
+                                                        user_data["hours"],
+                                                        user_data["minutes"])
     else:
-        user_data['date'] = f'{user_data["date"]} \
-                              {user_data["hours"]}:\
-                              {user_data["minutes"]}'
+        user_data['date'] = '{} {}:{}'.format(user_data["date"],
+                                                 user_data["hours"],
+                                                 user_data["minutes"])
     date_status = check_date(user_data["date"])
     if isinstance(date_status, datetime):
         user_data['date'] = date_status
