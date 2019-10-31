@@ -26,9 +26,9 @@ def add_user_to_database(telegramm_user_id, first_name, last_name, username,\
     if information_about_user is not None:
         information_about_user = User(
             telegramm_user_id,
-            first_name, 
-            last_name, 
-            username, 
+            first_name,
+            last_name,
+            username,
             chat_id)
         database_session.add(information_about_user)
         try:
@@ -58,9 +58,8 @@ def check_user_in_database(telegramm_user_id):
     information_about_user = database_session.query(User.first_name).\
         filter(User.telegramm_user_id == telegramm_user_id).\
         first()
-    if information_about_user is None:
-        return 'No user'
-    return information_about_user
+    return information_about_user if information_about_user is not None\
+                                                            else 'No user'
 
 
 def reminder_add_database(telegramm_user_id, comment, date_remind, status):
@@ -88,9 +87,8 @@ def reminds_list_database(telegramm_user_id):
         query(Reminder_data).\
         filter(Reminder_data.user_id == user_id[0]).\
         all()
-    if information_about_reminder is None:
-        return 'No remind'
-    return information_about_reminder
+    return information_about_reminder if information_about_reminder is not None\
+                                                                else 'No remind'
 
 
 def remind_list_for_delete(remind_id):
