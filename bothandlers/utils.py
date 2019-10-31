@@ -3,12 +3,24 @@ from datetime import datetime, timedelta
 from sqlalchemy.exc import SQLAlchemyError
 
 from database.modeldb import database_session, User, Reminder_data
+from settings import settings
 
-
-def check_date(date):
+def check_date(user_data):
     today_date = datetime.today()
+    if "day" in user_data:
+        user_data['date'] = '{}-{}-{} {}:{}'.format(
+            user_data["day"],
+            user_data["month"],
+            user_data["year"],
+            user_data["hours"],
+            user_data["minutes"])
+    else:
+        user_data['date'] = '{} {}:{}'.format(
+            user_data["date"],
+            user_data["hours"],
+            user_data["minutes"])
     try:
-        date_for_check = datetime.strptime(date, "%d-%m-%Y %H:%M")
+        date_for_check = datetime.strptime(user_data["date"], "%d-%m-%Y %H:%M")
         if date_for_check > today_date:
             return date_for_check
         else:
@@ -114,3 +126,13 @@ def remind_delete(remind_id):
         return 'Commited'
     except SQLAlchemyError:
         return 'Error'
+
+def remind_list_message(list_of_reminds):
+    text_message = ''
+    for remind in list_of_reminds:
+            text_message += settings.REMINDER_LIST_MESSAGE.format(
+                remind.id,
+                remind.date_remind,
+                remind.comment,
+                remind.status)
+    return text_message

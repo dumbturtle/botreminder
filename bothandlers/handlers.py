@@ -12,7 +12,8 @@ from bothandlers.keyboards import starting_keyboard, reminder_keyboard,\
     remind_list_for_delete_keyboard, remind_confirm_for_delete_keyboard
 from bothandlers.utils import check_date, add_user_to_database,\
     check_user_in_database, reminder_add_database, reminds_list_database,\
-    remind_list_for_delete, remind_delete, delete_user_from_database
+    remind_list_for_delete, remind_delete, delete_user_from_database,\
+    remind_list_message
 
 
 def greet_user(bot, update, user_data):
@@ -76,23 +77,14 @@ def reminds_list(bot, update, user_data):
         settings.REMINDER_ALL_LIST_MESSAGE,
         reply_markup=reminder_keyboard())
     if update.message.text == settings.REMINDER_ALL_LIST_MESSAGE:
-        for remind in list_of_reminds:
-            text_message += settings.REMINDER_LIST_MESSAGE.format(
-                remind.id,
-                remind.date_remind,
-                remind.comment,
-                remind.status)
+        text_message = remind_list_message(list_of_reminds)
         update.message.reply_text(
             text_message,
             reply_markup=reminder_keyboard())
         return ConversationHandler.END
     else:
         for remind in list_of_reminds:
-            text_message += settings.REMINDER_LIST_MESSAGE.format(
-                remind.id,
-                remind.date_remind,
-                remind.comment,
-                remind.status)
+            text_message = remind_list_message(list_of_reminds)
         update.message.reply_text(text_message)
         update.message.reply_text(settings.CHOOSE_REMIND_FOR_DELETE,
             reply_markup=remind_list_for_delete_keyboard(keys_list_of_reminds))
@@ -154,19 +146,7 @@ def calendar_add_hours(bot, update, user_data):
 
 def calendar_add_minutes(bot, update, user_data):
     user_data['minutes'] = update.message.text
-    if "day" in user_data:
-        user_data['date'] = '{}-{}-{} {}:{}'.format(
-            user_data["day"],
-            user_data["month"],
-            user_data["year"],
-            user_data["hours"],
-            user_data["minutes"])
-    else:
-        user_data['date'] = '{} {}:{}'.format(
-            user_data["date"],
-            user_data["hours"],
-            user_data["minutes"])
-    date_status = check_date(user_data["date"])
+    date_status = check_date(user_data)
     if isinstance(date_status, datetime):
         user_data['date'] = date_status
         text_message = settings.ENTER_COMMENT
