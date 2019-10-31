@@ -20,11 +20,13 @@ def greet_user(bot, update, user_data):
     if commit_status == "No user":
         message_text = settings.JOIN_TEXT
         update.message.reply_text(
-            message_text, reply_markup=starting_keyboard())
+            message_text,
+            reply_markup=starting_keyboard())
     else:
         message_text = settings.JOIN_TEXT_FOR_USER.format(commit_status[0])
         update.message.reply_text(
-            message_text, reply_markup=reminder_keyboard())
+            message_text,
+            reply_markup=reminder_keyboard())
 
 
 def join_user(bot, update, user_data):
@@ -40,7 +42,9 @@ def join_user(bot, update, user_data):
     else:
         commit_status = commit_status[0].first_name
         text_message = settings.ALREADY_EXISTS_USER.format(commit_status)
-    update.message.reply_text(text_message, reply_markup=reminder_keyboard())
+    update.message.reply_text(
+        text_message,
+        reply_markup=reminder_keyboard())
 
 
 def unjoin_user(bot, update, user_data):
@@ -51,13 +55,16 @@ def unjoin_user(bot, update, user_data):
         text_message = settings.ADD_ERROR
     else:
         text_message = settings.NO_USER
-    update.message.reply_text(text_message, reply_markup=starting_keyboard())
+    update.message.reply_text(
+        text_message,
+        reply_markup=starting_keyboard())
 
 
 def reminder_add(bot, update, user_data):
     text_message = settings.ENTER_DATE
     update.message.reply_text(
-        text_message, reply_markup=reminder_add_day_keyboard())
+        text_message,
+        reply_markup=reminder_add_day_keyboard())
     return "reminder_add_date"
 
 
@@ -66,22 +73,29 @@ def reminds_list(bot, update, user_data):
     list_of_reminds = reminds_list_database(update.effective_user.id)
     keys_list_of_reminds = [f'{key.id}' for key in list_of_reminds]
     update.message.reply_text(
-        settings.REMINDER_ALL_LIST_MESSAGE, reply_markup=reminder_keyboard())
+        settings.REMINDER_ALL_LIST_MESSAGE,
+        reply_markup=reminder_keyboard())
     if update.message.text == settings.REMINDER_ALL_LIST_MESSAGE:
         for remind in list_of_reminds:
             text_message += settings.REMINDER_LIST_MESSAGE.format(
-                remind.id, remind.date_remind, remind.comment, remind.status)
+                remind.id,
+                remind.date_remind,
+                remind.comment,
+                remind.status)
         update.message.reply_text(
-            text_message, reply_markup=reminder_keyboard())
+            text_message,
+            reply_markup=reminder_keyboard())
         return ConversationHandler.END
     else:
         for remind in list_of_reminds:
             text_message += settings.REMINDER_LIST_MESSAGE.format(
-                remind.id, remind.date_remind, remind.comment, remind.status)
+                remind.id,
+                remind.date_remind,
+                remind.comment,
+                remind.status)
         update.message.reply_text(text_message)
         update.message.reply_text(settings.CHOOSE_REMIND_FOR_DELETE,
-            reply_markup=remind_list_for_delete_keyboard(keys_list_of_reminds)
-            )
+            reply_markup=remind_list_for_delete_keyboard(keys_list_of_reminds))
         return "confirm_remind_for_delete"
 
 
@@ -90,8 +104,7 @@ def reminder_add_date(bot, update, user_data):
     text_message = settings.ENTER_HOURS
     update.message.reply_text(
         text_message,
-        reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1)
-        )
+        reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1))
     return "calendar_add_hours"
 
 
@@ -99,8 +112,7 @@ def calendar_add_date(bot, update, user_data):
     text_message = settings.ENTER_DAY
     update.message.reply_text(
         text_message,
-        reply_markup=reminder_add_digital_period_keyboard(1, 31, 10, 1)
-        )
+        reply_markup=reminder_add_digital_period_keyboard(1, 31, 10, 1))
     return "calendar_add_day"
 
 
@@ -109,8 +121,7 @@ def calendar_add_day(bot, update, user_data):
     user_data['day'] = update.message.text
     update.message.reply_text(
         text_message,
-        reply_markup=reminder_add_digital_period_keyboard(1, 12, 10, 1)
-        )
+        reply_markup=reminder_add_digital_period_keyboard(1, 12, 10, 1))
     return "calendar_add_month"
 
 
@@ -119,8 +130,7 @@ def calendar_add_month(bot, update, user_data):
     user_data['month'] = update.message.text
     update.message.reply_text(
         text_message,
-        reply_markup=reminder_add_digital_period_keyboard(2019, 2022, 1, 1)
-        )
+        reply_markup=reminder_add_digital_period_keyboard(2019, 2022, 1, 1))
     return "calendar_add_year"
 
 
@@ -129,8 +139,7 @@ def calendar_add_year(bot, update, user_data):
     text_message = settings.ENTER_HOURS
     update.message.reply_text(
         text_message,
-        reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1)
-        )
+        reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1))
     return "calendar_add_hours"
 
 
@@ -139,33 +148,36 @@ def calendar_add_hours(bot, update, user_data):
     text_message = settings.ENTER_MINUTES
     update.message.reply_text(
         text_message,
-        reply_markup=reminder_add_digital_period_keyboard(0, 59, 10, 5)
-        )
+        reply_markup=reminder_add_digital_period_keyboard(0, 59, 10, 5))
     return "calendar_add_minutes"
 
 
 def calendar_add_minutes(bot, update, user_data):
     user_data['minutes'] = update.message.text
     if "day" in user_data:
-        user_data['date'] = '{}-{}-{} {}:{}'.format(user_data["day"],
-                                                        user_data["month"],
-                                                        user_data["year"],
-                                                        user_data["hours"],
-                                                        user_data["minutes"])
+        user_data['date'] = '{}-{}-{} {}:{}'.format(
+            user_data["day"],
+            user_data["month"],
+            user_data["year"],
+            user_data["hours"],
+            user_data["minutes"])
     else:
-        user_data['date'] = '{} {}:{}'.format(user_data["date"],
-                                                 user_data["hours"],
-                                                 user_data["minutes"])
+        user_data['date'] = '{} {}:{}'.format(
+            user_data["date"],
+            user_data["hours"],
+            user_data["minutes"])
     date_status = check_date(user_data["date"])
     if isinstance(date_status, datetime):
         user_data['date'] = date_status
         text_message = settings.ENTER_COMMENT
         update.message.reply_text(
-            text_message, reply_markup=ReplyKeyboardRemove())
+            text_message,
+            reply_markup=ReplyKeyboardRemove())
         return "reminder_add_comment"
     text_message = settings.INVALID_DATE_OR_TIME.format(date_status)
     update.message.reply_text(
-        text_message, reply_markup=reminder_add_day_keyboard())
+        text_message,
+        reply_markup=reminder_add_day_keyboard())
     return "reminder_add_date"
 
 
@@ -175,10 +187,11 @@ def reminder_add_comment(bot, update, user_data):
         update.effective_user.id,
         user_data['comment'],
         user_data['date'],
-        settings.REMINDER_STATUS_ON_ADD
-        )
+        settings.REMINDER_STATUS_ON_ADD)
     text_message = settings.COMMIT_WITH_COMMENT.format(
-        user_data["date"], user_data["comment"], commit_status)
+        user_data["date"],
+        user_data["comment"],
+        commit_status)
     update.message.reply_text(text_message, reply_markup=reminder_keyboard())
     return ConversationHandler.END
 
@@ -198,20 +211,19 @@ def confirm_remind_for_delete(bot, update, user_data):
     if remind_for_delete == "No remind":
         text_message = settings.NO_REMIND
         update.message.reply_text(
-            text_message, reply_markup=reminder_keyboard())
+            text_message,
+            reply_markup=reminder_keyboard())
     else:
         full_remind_for_delete = settings.REMINDER_LIST_MESSAGE.format(
             remind_for_delete.id,
             remind_for_delete.date_remind,
             remind_for_delete.comment,
-            remind_for_delete.status
-            )
+            remind_for_delete.status)
         text_message = settings.CONFIRM_REMIND_FOR_DELETE.format(
             full_remind_for_delete)
         update.message.reply_text(
             text_message,
-            reply_markup=remind_confirm_for_delete_keyboard()
-            )
+            reply_markup=remind_confirm_for_delete_keyboard())
         return "commit_remind_for_delete"
 
 
@@ -224,18 +236,21 @@ def commit_remind_for_delete(bot, update, user_data):
         text_message = settings.ADD_ERROR
     else:
         text_message = settings.NO_REMIND
-
-    update.message.reply_text(text_message, reply_markup=reminder_keyboard())
+    update.message.reply_text(
+        text_message,
+        reply_markup=reminder_keyboard())
     return ConversationHandler.END
 
 
 def cancel_remind_for_delete(bot, update, user_data):
     update.message.reply_text(
-        settings.CANCEL_REMIND_FOR_DELETE, reply_markup=reminder_keyboard())
+        settings.CANCEL_REMIND_FOR_DELETE,
+        reply_markup=reminder_keyboard())
     return ConversationHandler.END
 
 
 def dontknow(bot, update, user_data):
-    update.message.reply_text(settings.DONTKNOW_TEXT,
-                              reply_markup=reminder_keyboard())
+    update.message.reply_text(
+        settings.DONTKNOW_TEXT,
+        reply_markup=reminder_keyboard())
     return ConversationHandler.END

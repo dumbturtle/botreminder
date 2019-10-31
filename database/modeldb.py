@@ -19,20 +19,29 @@ class User(Base):
     last_name = Column(String)
     username = Column(String)
     chat_id = Column(Integer)
-    def __init__(self, telegramm_user_id, first_name, last_name, username, chat_id):
+
+    def __init__(self, telegramm_user_id, first_name, last_name, username,
+                                                                    chat_id):
         self.telegramm_user_id = telegramm_user_id
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
         self.chat_id = chat_id
+
     def __repr__(self):
-        return "<User('%d','%d','%s', '%s', '%s', '%d')>".format(self.id, self.telegramm_user_id, self.first_name, self.last_name, self.username, self.chat_id)
+        return "<User {}, {}, {}, {}, {}, {}>".format(
+            self.id,
+            self.telegramm_user_id,
+            self.first_name,
+            self.last_name,
+            self.username,
+            self.chat_id)
 
 
 class Reminder_data(Base):
     __tablename__ = 'remainders'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer,index=True)
+    user_id = Column(Integer, index=True)
     comment = Column(String)
     date_remind = Column(DateTime)
     status = Column(String)
@@ -44,7 +53,9 @@ class Reminder_data(Base):
         self.status = status
 
     def __repr__(self):
-        return "<Data('%d', '%d', '%s', '%s', '%s')>".format(self.id, self.user_id, self.comment, self.date_remind, self.status)
-
-
-
+        return "<Data {}, {}, {}, {}, {}>".format(
+            self.id,
+            self.user_id,
+            self.comment,
+            self.date_remind,
+            self.status)
