@@ -10,6 +10,7 @@ from bothandlers.handlers import greet_user, join_user, reminder_add,\
     reminder_skip_comment, confirm_remind_for_delete,\
     commit_remind_for_delete, cancel_remind_for_delete, dontknow, unjoin_user
 
+logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO, filename='bot.log')
 
 def main():
     mybot = Updater(
