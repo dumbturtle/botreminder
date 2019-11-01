@@ -25,10 +25,15 @@
 
 Настройка:
 1. Внести изменения в файл конфигурации. connect_settings.py
+
 API_KEY = '' - ключ к боту, полученный от @botfather
+
 PROXY_REMINDS_HANDLERS_PROXY = ''  -адрес прокси сервера
+
 PROXY_REMINDS_HANDLERS_ACCOUNT = {"username": "", "password": ""} -пароль и  логин
+
 DATABASE = "sqlite:///*.db" - путь к вашей базе данных SQLite
+
 
 Установка:
 1. Устанавливаем Python 3.7
