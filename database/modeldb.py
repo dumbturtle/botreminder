@@ -21,7 +21,7 @@ class User(Base):
     chat_id = Column(Integer)
 
     def __init__(self, telegramm_user_id, first_name, last_name, username,
-                                                                    chat_id):
+                 chat_id):
         self.telegramm_user_id = telegramm_user_id
         self.first_name = first_name
         self.last_name = last_name
@@ -30,12 +30,8 @@ class User(Base):
 
     def __repr__(self):
         return "<User {}, {}, {}, {}, {}, {}>".format(
-            self.id,
-            self.telegramm_user_id,
-            self.first_name,
-            self.last_name,
-            self.username,
-            self.chat_id)
+            self.id, self.telegramm_user_id, self.first_name,
+            self.last_name,self.username, self.chat_id)
 
 
 class Reminder_data(Base):
@@ -54,8 +50,5 @@ class Reminder_data(Base):
 
     def __repr__(self):
         return "<Data {}, {}, {}, {}, {}>".format(
-            self.id,
-            self.user_id,
-            self.comment,
-            self.date_remind,
-            self.status)
+            self.id, self.user_id, self.comment,
+            self.date_remind, self.status)
