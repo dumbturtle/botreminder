@@ -23,3 +23,5 @@ config.py
 !requirements.txt
 *.jpg
 downloads/
+test.py
+

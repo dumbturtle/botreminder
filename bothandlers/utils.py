@@ -6,6 +6,15 @@ from database.modeldb import database_session, User, Reminder_data
 from settings import settings
 
 
+def try_to_commit(session):
+    try:
+        session.commit()
+        return True
+    except SQLAlchemyError:
+        print("Error commit")
+        return False
+
+
 def check_date(user_data):
     today_date = datetime.today()
     
@@ -21,9 +30,9 @@ def check_date(user_data):
         if date_for_check > today_date:
             return date_for_check
         else:
-            return 'False: date in paste'
+            raise ValueError('Error: False: date in paste')
     except ValueError as error:
-        return 'Error:{}'.format(error)
+        return 'Error: {}'.format(error)
 
 
 def add_user_to_database(telegramm_user_id, first_name, last_name, username, chat_id):
@@ -34,16 +43,9 @@ def add_user_to_database(telegramm_user_id, first_name, last_name, username, cha
     ).all()
     
     if information_about_user is not None:
-        information_about_user = User(
-            telegramm_user_id, first_name, last_name,
-            username, chat_id)
+        information_about_user = User(telegramm_user_id, first_name, last_name, username, chat_id)
         database_session.add(information_about_user)
-        
-        try:
-            database_session.commit()
-            return 'Commited'
-        except SQLAlchemyError:
-            return 'Error'
+        return try_to_commit(database_session)
     
     return information_about_user
 
@@ -56,18 +58,14 @@ def delete_user_from_database(telegramm_user_id):
     ).all()
     
     if information_about_user is None:
-        return 'No user'
+        raise ValueError('Error: No user')
     database_session.query(
         User
     ).filter(
         User.telegramm_user_id == telegramm_user_id
     ).delete()
     
-    try:
-        database_session.commit()
-        return 'Commited'
-    except SQLAlchemyError:
-        return 'Error'
+    return try_to_commit(database_session)
 
 
 def check_user_in_database(telegramm_user_id):
@@ -75,7 +73,7 @@ def check_user_in_database(telegramm_user_id):
         User.first_name
     ).filter(
         User.telegramm_user_id == telegramm_user_id
-        ).first()
+    ).first()
     return information_about_user if information_about_user is not None else 'No user'
 
 
@@ -89,11 +87,7 @@ def reminder_add_database(telegramm_user_id, comment, date_remind, status):
         user_id[0], comment, date_remind, status)
     database_session.add(information_about_reminder)
     
-    try:
-        database_session.commit()
-        return 'Commited'
-    except SQLAlchemyError:
-        return 'Error'
+    return try_to_commit(database_session)
 
 
 def reminds_list_database(telegramm_user_id):
@@ -101,7 +95,7 @@ def reminds_list_database(telegramm_user_id):
         User.id
     ).filter(
         User.telegramm_user_id == telegramm_user_id
-        ).first()
+    ).first()
     information_about_reminder = database_session.query(
         Reminder_data
     ).filter(
@@ -129,25 +123,20 @@ def remind_delete(remind_id):
     ).first()
     
     if remind is None:
-        return 'No remind'
+        raise Exception('Error: No remind')
     database_session.query(
         Reminder_data
     ).filter(
         Reminder_data.id == remind_id
     ).delete()
     
-    try:
-        database_session.commit()
-        return 'Commited'
-    except SQLAlchemyError:
-        return 'Error'
+    return try_to_commit(database_session)
 
 
 def remind_list_message(list_of_reminds):
     text_message = ''
     
     for remind in list_of_reminds:
-            text_message += settings.REMINDER_LIST_MESSAGE.format(
-                remind.id, remind.date_remind, remind.comment, remind.status)
+        text_message += settings.REMINDER_LIST_MESSAGE.format(remind.id, remind.date_remind, remind.comment, remind.status)
     
     return text_message

@@ -17,13 +17,13 @@ from bothandlers.utils import check_date, add_user_to_database,\
 
 
 def greet_user(bot, update, user_data):
-    commit_status = check_user_in_database(update.effective_user.id)
-    
-    if commit_status == "No user":
+    check_user = check_user_in_database(update.effective_user.id)
+
+    if check_user == "No user":
         message_text = settings.JOIN_TEXT
         update.message.reply_text(message_text, reply_markup=starting_keyboard())
     else:
-        message_text = settings.JOIN_TEXT_FOR_USER.format(commit_status[0])
+        message_text = settings.JOIN_TEXT_FOR_USER.format(check_user[0])
         update.message.reply_text(message_text, reply_markup=reminder_keyboard())
 
 
@@ -32,10 +32,9 @@ def join_user(bot, update, user_data):
         update.effective_user.id, update.effective_user.first_name,
         update.effective_user.last_name, update.effective_user.username,
         update.message.chat_id)
-    
-    if commit_status == 'Commited':
+    if commit_status:
         text_message = settings.ADD_USER
-    elif commit_status == 'Error':
+    elif not commit_status:
         text_message = settings.ADD_ERROR
     else:
         commit_status = commit_status[0].first_name
@@ -46,9 +45,9 @@ def join_user(bot, update, user_data):
 def unjoin_user(bot, update, user_data):
     commit_status = delete_user_from_database(update.effective_user.id)
     
-    if commit_status == 'Commited':
+    if commit_status:
         text_message = settings.REMOVE_USER
-    elif commit_status == 'Error':
+    elif not commit_status:
         text_message = settings.ADD_ERROR
     else:
         text_message = settings.NO_USER
@@ -65,7 +64,6 @@ def reminder_add(bot, update, user_data):
 
 def reminds_list(bot, update, user_data):
     text_message = ''
-    
     list_of_reminds = reminds_list_database(update.effective_user.id)
     keys_list_of_reminds = [f'{key.id}' for key in list_of_reminds]
     update.message.reply_text(settings.REMINDER_ALL_LIST_MESSAGE, reply_markup=reminder_keyboard())
@@ -174,9 +172,7 @@ def confirm_remind_for_delete(bot, update, user_data):
         text_message = settings.NO_REMIND
         update.message.reply_text(text_message, reply_markup=reminder_keyboard())
     else:
-        full_remind_for_delete = settings.REMINDER_LIST_MESSAGE.format(
-            remind_for_delete.id, remind_for_delete.date_remind,
-            remind_for_delete.comment, remind_for_delete.status)
+        full_remind_for_delete = settings.REMINDER_LIST_MESSAGE.format(remind_for_delete.id, remind_for_delete.date_remind, remind_for_delete.comment, remind_for_delete.status)
         text_message = settings.CONFIRM_REMIND_FOR_DELETE.format(full_remind_for_delete)
         update.message.reply_text(text_message, reply_markup=remind_confirm_for_delete_keyboard())
         
@@ -186,9 +182,9 @@ def confirm_remind_for_delete(bot, update, user_data):
 def commit_remind_for_delete(bot, update, user_data):
     commit_status = remind_delete(user_data["number_remind_for_delete"])
 
-    if commit_status == 'Commited':
+    if commit_status:
         text_message = settings.REMOVE_REMIND_FOR_DELETE
-    elif commit_status == 'Error':
+    elif not commit_status:
         text_message = settings.ADD_ERROR
     else:
         text_message = settings.NO_REMIND

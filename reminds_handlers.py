@@ -1,5 +1,6 @@
 
 import logging
+import logging.config
 import schedule
 from datetime import datetime, timedelta
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,6 +8,9 @@ from telegram import Bot, utils
 
 from settings import connect_settings, settings
 from database.modeldb import database_session, User, Reminder_data
+
+logging.config.fileConfig('logging.cfg')
+logger = logging.getLogger('RemindApp')
 
 
 def check_time_reminder():
@@ -17,6 +21,7 @@ def check_time_reminder():
     ).all()
     
     for reminder in reminders_list:
+        logger.info("Проверено напоминание: {}-{}-{}".format(reminder.user_id, reminder.date_remind, reminder.comment))
         if reminder.date_remind.strftime("%d-%m-%Y %H:%M") == ((datetime.now() + timedelta(hours=3)).strftime("%d-%m-%Y %H:%M")):
             sending_notification_reminder(reminder.user_id, reminder.date_remind, reminder.comment)
             change_reminder_status(reminder.id)
@@ -44,12 +49,12 @@ def change_reminder_status(remind_id):
     
     try:
         database_session.commit()
-        return 'Commited'
     except SQLAlchemyError:
-        return 'Error'
+        logger.error("Commit error")
 
 
 def main_reminds_handlers():
+    logger.info('Reminds Handlers Start')
     schedule.every().minute.at(":01").do(check_time_reminder)
     while True:
         schedule.run_pending()
