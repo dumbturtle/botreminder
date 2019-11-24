@@ -24,4 +24,5 @@ config.py
 *.jpg
 downloads/
 test.py
+!logging.cfg
 

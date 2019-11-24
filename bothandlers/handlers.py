@@ -138,10 +138,13 @@ def calendar_add_minutes(bot, update, user_data):
         user_data['date'] = date_status
         text_message = settings.ENTER_COMMENT
         update.message.reply_text(text_message, reply_markup=ReplyKeyboardRemove())
-        
         return "reminder_add_comment"
-    
-    text_message = settings.INVALID_DATE_OR_TIME.format(date_status)
+    elif not date_status:
+        text_message = settings.INVALID_DATE_OR_TIME.format(date_status)
+    else:
+        text_message = settings.ADD_ERROR
+        logging.error(user_data) 
+        
     update.message.reply_text(text_message, reply_markup=reminder_add_day_keyboard())
     
     return "reminder_add_date"

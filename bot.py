@@ -16,9 +16,9 @@ logger = logging.getLogger('BotApp')
 
 
 def main():
-    mybot = Updater(
-        connect_settings.API_KEY, request_kwargs={'proxy_url': connect_settings.PROXY, 'urllib3_proxy_kwargs': connect_settings.PROXY_ACCOUNT})
+    mybot = Updater(connect_settings.API_KEY, request_kwargs={'proxy_url': connect_settings.PROXY, 'urllib3_proxy_kwargs': connect_settings.PROXY_ACCOUNT})
     dp = mybot.dispatcher
+    logging.info(settings.BOT_RUN)
     reminder_create = ConversationHandler(
         entry_points=[
             RegexHandler('^(Добавить напоминание)$', reminder_add, pass_user_data=True)

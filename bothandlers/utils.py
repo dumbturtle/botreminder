@@ -1,4 +1,5 @@
 
+import logging
 from datetime import datetime, timedelta
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -11,7 +12,7 @@ def try_to_commit(session):
         session.commit()
         return True
     except SQLAlchemyError:
-        print("Error commit")
+        logging.error(settings.BOT_ERROR_COMMIT)
         return False
 
 
@@ -23,14 +24,13 @@ def check_date(user_data):
             user_data["day"], user_data["month"], user_data["year"],
             user_data["hours"], user_data["minutes"])
     else:
-        user_data['date'] = '{} {}:{}'.format(
-            user_data["date"], user_data["hours"], user_data["minutes"])
+        user_data['date'] = '{} {}:{}'.format(user_data["date"], user_data["hours"], user_data["minutes"])
     try:
         date_for_check = datetime.strptime(user_data["date"], "%d-%m-%Y %H:%M")
         if date_for_check > today_date:
             return date_for_check
         else:
-            raise ValueError('Error: False: date in paste')
+            return False
     except ValueError as error:
         return 'Error: {}'.format(error)
 
@@ -58,7 +58,7 @@ def delete_user_from_database(telegramm_user_id):
     ).all()
     
     if information_about_user is None:
-        raise ValueError('Error: No user')
+        return settings.BOT_NO_USER
     database_session.query(
         User
     ).filter(
