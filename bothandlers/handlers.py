@@ -1,4 +1,5 @@
-import logging
+
+
 from datetime import datetime
 from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, ParseMode,\
     error, InlineKeyboardMarkup, InlineKeyboardButton
@@ -13,7 +14,7 @@ from bothandlers.keyboards import starting_keyboard, reminder_keyboard,\
 from bothandlers.utils import check_date, add_user_to_database,\
     check_user_in_database, reminder_add_database, reminds_list_database,\
     remind_list_for_delete, remind_delete, delete_user_from_database,\
-    remind_list_message
+    remind_list_message, logger
 
 
 def greet_user(bot, update, user_data):
@@ -143,7 +144,7 @@ def calendar_add_minutes(bot, update, user_data):
         text_message = settings.INVALID_DATE_OR_TIME.format(date_status)
     else:
         text_message = settings.ADD_ERROR
-        logging.error(user_data) 
+        logger.error(date_status) 
         
     update.message.reply_text(text_message, reply_markup=reminder_add_day_keyboard())
     
@@ -183,13 +184,13 @@ def confirm_remind_for_delete(bot, update, user_data):
 
 
 def commit_remind_for_delete(bot, update, user_data):
-    commit_status = remind_delete(user_data["number_remind_for_delete"])
+    remind_delete_status = remind_delete(user_data["number_remind_for_delete"])
 
-    if commit_status:
+    if remind_delete_status:
         text_message = settings.REMOVE_REMIND_FOR_DELETE
-    elif not commit_status:
+    elif not remind_delete_status:
         text_message = settings.ADD_ERROR
-    else:
+    elif remind_delete_status is None:
         text_message = settings.NO_REMIND
     
     update.message.reply_text(text_message, reply_markup=reminder_keyboard())

@@ -1,5 +1,5 @@
-import logging
-import logging.config
+
+
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters,\
     RegexHandler, ConversationHandler, CallbackQueryHandler
 
@@ -9,16 +9,14 @@ from bothandlers.handlers import greet_user, join_user, reminder_add,\
     calendar_add_day, calendar_add_month, calendar_add_year,\
     calendar_add_hours, calendar_add_minutes, reminder_add_comment,\
     reminder_skip_comment, confirm_remind_for_delete,\
-    commit_remind_for_delete, cancel_remind_for_delete, dontknow, unjoin_user
-
-logging.config.fileConfig('logging.cfg')
-logger = logging.getLogger('BotApp')
+    commit_remind_for_delete, cancel_remind_for_delete, dontknow, unjoin_user,\
+    logger
 
 
 def main():
     mybot = Updater(connect_settings.API_KEY, request_kwargs={'proxy_url': connect_settings.PROXY, 'urllib3_proxy_kwargs': connect_settings.PROXY_ACCOUNT})
     dp = mybot.dispatcher
-    logging.info(settings.BOT_RUN)
+    logger.info(settings.BOT_RUN)
     reminder_create = ConversationHandler(
         entry_points=[
             RegexHandler('^(Добавить напоминание)$', reminder_add, pass_user_data=True)

@@ -1,18 +1,21 @@
 
 import logging
+import logging.config
 from datetime import datetime, timedelta
 from sqlalchemy.exc import SQLAlchemyError
 
 from database.modeldb import database_session, User, Reminder_data
 from settings import settings
 
+logging.config.fileConfig('logging.cfg')
+logger = logging.getLogger('BotApp')
 
 def try_to_commit(session):
     try:
         session.commit()
         return True
     except SQLAlchemyError:
-        logging.error(settings.BOT_ERROR_COMMIT)
+        logger.error(settings.BOT_ERROR_COMMIT)
         return False
 
 
@@ -29,6 +32,7 @@ def check_date(user_data):
         date_for_check = datetime.strptime(user_data["date"], "%d-%m-%Y %H:%M")
         if date_for_check > today_date:
             return date_for_check
+            
         else:
             return False
     except ValueError as error:
@@ -123,7 +127,7 @@ def remind_delete(remind_id):
     ).first()
     
     if remind is None:
-        raise Exception('Error: No remind')
+        return None
     database_session.query(
         Reminder_data
     ).filter(
