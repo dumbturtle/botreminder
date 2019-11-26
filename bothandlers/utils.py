@@ -78,7 +78,7 @@ def check_user_in_database(telegramm_user_id):
     ).filter(
         User.telegramm_user_id == telegramm_user_id
     ).first()
-    return information_about_user if information_about_user is not None else 'No user'
+    return information_about_user if information_about_user is not None else None
 
 
 def reminder_add_database(telegramm_user_id, comment, date_remind, status):
