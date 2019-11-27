@@ -1,12 +1,15 @@
 import unittest
 from datetime import datetime, timedelta
 
-from bothandlers.utils import check_date, delete_user_from_database, add_user_to_database,check_user_in_database
+from bothandlers.utils import check_date, delete_user_from_database, add_user_to_database, check_user_in_database
 
 
-class BotHandlersTest_check_date(unittest.TestCase):
+class BotHandlersTestCheckDate(unittest.TestCase):
     def test_formate_date(self):
-        date = {'date': '27-11-2019', 'hours': '15', 'minutes': '35'}
+        date = {}
+        date['date'] = datetime.strftime(datetime.now() + timedelta(days=1), '%d-%m-%Y')
+        date['hours'] = datetime.now().hour
+        date['minutes'] = datetime.now().minute
         self.assertIsInstance(check_date(date), datetime)
 
     def test_current_date(self):
@@ -14,7 +17,7 @@ class BotHandlersTest_check_date(unittest.TestCase):
         date['date'] = datetime.strftime(datetime.now() + timedelta(days=1), '%d-%m-%Y')
         date['hours'] = datetime.now().hour
         date['minutes'] = datetime.now().minute
-        check_valid_date = (datetime.now() + timedelta(days=1)).replace(second=0,microsecond=0)
+        check_valid_date = (datetime.now() + timedelta(days=1)).replace(second=0, microsecond=0)
         self.assertEqual(check_date(date), check_valid_date)
     
     def test_past_date(self):
@@ -29,7 +32,8 @@ class BotHandlersTest_check_date(unittest.TestCase):
         function_result = "Error: time data '25-  11-2019 15:35' does not match format '%d-%m-%Y %H:%M'" 
         self.assertEqual(check_date(date), function_result)
 
-class BotHandlersTest_add_user_to_database(unittest.TestCase):
+
+class BotHandlersTestAddUserToDatabase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         if check_user_in_database(1111) is not None:
@@ -46,7 +50,8 @@ class BotHandlersTest_add_user_to_database(unittest.TestCase):
     def test_add_user_to_database(self):
         self.assertTrue(add_user_to_database(1111,'Test_name', 'Test_surname', 'Test_nickname', 1111))
 
-class BotHandlersTest_delete_user_from_database(unittest.TestCase):
+
+class BotHandlersTestDeleteUserFromDatabase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         if check_user_in_database(1111) is None:
@@ -55,14 +60,15 @@ class BotHandlersTest_delete_user_from_database(unittest.TestCase):
     
     @classmethod
     def tearDownClass(cls):
-       if check_user_in_database(1111) is not None:
+        if check_user_in_database(1111) is not None:
             delete_user_from_database(1111)
             print("User for testing deleted")
     
     def test_delete_user_from_database(self):
         self.assertTrue(delete_user_from_database(1111))
 
-class BotHandlersTest_check_user_in_database(unittest.TestCase):
+
+class BotHandlersTestCheckUserInDatabase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         if check_user_in_database(1111) is None:

@@ -34,7 +34,7 @@ class User(Base):
             self.last_name,self.username, self.chat_id)
 
 
-class Reminder_data(Base):
+class ReminderData(Base):
     __tablename__ = 'remainders'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, index=True)

@@ -1,9 +1,10 @@
 import logging
+import logging.config
 
 from datetime import datetime, timedelta
 from sqlalchemy.exc import SQLAlchemyError
 
-from database.modeldb import database_session, User, Reminder_data
+from database.modeldb import database_session, User, ReminderData
 from settings import settings
 
 logging.config.fileConfig('logging.cfg')
@@ -87,7 +88,7 @@ def reminder_add_database(telegramm_user_id, comment, date_remind, status):
     ).filter(
         User.telegramm_user_id == telegramm_user_id
     ).first()
-    information_about_reminder = Reminder_data(
+    information_about_reminder = ReminderData(
         user_id[0], comment, date_remind, status)
     database_session.add(information_about_reminder)
     
@@ -101,9 +102,9 @@ def reminds_list_database(telegramm_user_id):
         User.telegramm_user_id == telegramm_user_id
     ).first()
     information_about_reminder = database_session.query(
-        Reminder_data
+        ReminderData
     ).filter(
-        Reminder_data.user_id == user_id[0]
+        ReminderData.user_id == user_id[0]
     ).all()
     
     return information_about_reminder if information_about_reminder is not None else 'No remind'
@@ -111,9 +112,9 @@ def reminds_list_database(telegramm_user_id):
 
 def remind_list_for_delete(remind_id):
     remind = database_session.query(
-        Reminder_data
+        ReminderData
     ).filter(
-        Reminder_data.id == remind_id
+        ReminderData.id == remind_id
     ).first()
     
     return remind if remind is not None else "No remind"
@@ -121,17 +122,17 @@ def remind_list_for_delete(remind_id):
 
 def remind_delete(remind_id):
     remind = database_session.query(
-        Reminder_data
+        ReminderData
     ).filter(
-        Reminder_data.id == remind_id
+        ReminderData.id == remind_id
     ).first()
     
     if remind is None:
         return None
     database_session.query(
-        Reminder_data
+        ReminderData
     ).filter(
-        Reminder_data.id == remind_id
+        ReminderData.id == remind_id
     ).delete()
     
     return try_to_commit(database_session)

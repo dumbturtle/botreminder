@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from telegram import Bot, utils
 
 from settings import connect_settings, settings
-from database.modeldb import database_session, User, Reminder_data
+from database.modeldb import database_session, User, ReminderData
 
 logging.config.fileConfig('logging.cfg')
 logger = logging.getLogger('RemindApp')
@@ -15,9 +15,9 @@ logger = logging.getLogger('RemindApp')
 
 def check_time_reminder():
     reminders_list = database_session.query(
-        Reminder_data
+        ReminderData
     ).filter(
-        Reminder_data.status == 'active'
+        ReminderData.status == 'active'
     ).all()
     
     for reminder in reminders_list:
@@ -42,9 +42,9 @@ def sending_notification_reminder(user_id, reminder_date, comment):
 
 def change_reminder_status(remind_id):
     database_session.query(
-        Reminder_data
+        ReminderData
     ).filter(
-        Reminder_data.id == remind_id
+        ReminderData.id == remind_id
     ).update({'status': 'deactive'})   
     
     try:
