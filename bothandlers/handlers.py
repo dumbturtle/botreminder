@@ -1,5 +1,3 @@
-
-
 from datetime import datetime
 from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, ParseMode,\
     error, InlineKeyboardMarkup, InlineKeyboardButton

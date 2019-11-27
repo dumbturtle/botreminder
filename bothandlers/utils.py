@@ -1,6 +1,5 @@
-
 import logging
-import logging.config
+
 from datetime import datetime, timedelta
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -9,6 +8,7 @@ from settings import settings
 
 logging.config.fileConfig('logging.cfg')
 logger = logging.getLogger('BotApp')
+
 
 def try_to_commit(session):
     try:
