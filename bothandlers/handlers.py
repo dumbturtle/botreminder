@@ -18,7 +18,7 @@ from bothandlers.utils import check_date, add_user_to_database,\
 def greet_user(bot, update, user_data):
     check_user = check_user_in_database(update.effective_user.id)
 
-    if check_user == "No user":
+    if check_user is None:
         message_text = settings.JOIN_TEXT
         update.message.reply_text(message_text, reply_markup=starting_keyboard())
     else:
