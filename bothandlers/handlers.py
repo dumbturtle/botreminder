@@ -1,18 +1,23 @@
 from datetime import datetime
-from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, ParseMode,\
-    error, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters,\
-    RegexHandler, ConversationHandler, CallbackQueryHandler
 
+from telegram import (InlineKeyboardButton, InlineKeyboardMarkup, ParseMode,
+                      ReplyKeyboardMarkup, ReplyKeyboardRemove, error)
+from telegram.ext import (CallbackQueryHandler, CommandHandler,
+                          ConversationHandler, Filters, MessageHandler,
+                          RegexHandler, Updater)
+
+from bothandlers.keyboards import (remind_confirm_for_delete_keyboard,
+                                   remind_list_for_delete_keyboard,
+                                   reminder_add_day_keyboard,
+                                   reminder_add_digital_period_keyboard,
+                                   reminder_keyboard, starting_keyboard)
+from bothandlers.utils import (add_user_to_database, check_date,
+                               check_user_in_database,
+                               delete_user_from_database, logger,
+                               remind_delete, remind_list_for_delete,
+                               remind_list_message, reminder_add_database,
+                               reminds_list_database)
 from settings import settings
-
-from bothandlers.keyboards import starting_keyboard, reminder_keyboard,\
-    reminder_add_day_keyboard, reminder_add_digital_period_keyboard,\
-    remind_list_for_delete_keyboard, remind_confirm_for_delete_keyboard
-from bothandlers.utils import check_date, add_user_to_database,\
-    check_user_in_database, reminder_add_database, reminds_list_database,\
-    remind_list_for_delete, remind_delete, delete_user_from_database,\
-    remind_list_message, logger
 
 
 def greet_user(bot, update, user_data):

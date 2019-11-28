@@ -1,14 +1,18 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters,\
-    RegexHandler, ConversationHandler, CallbackQueryHandler
+from telegram.ext import (CallbackQueryHandler, CommandHandler,
+                          ConversationHandler, Filters, MessageHandler,
+                          RegexHandler, Updater)
 
+from bothandlers.handlers import (calendar_add_date, calendar_add_day,
+                                  calendar_add_hours, calendar_add_minutes,
+                                  calendar_add_month, calendar_add_year,
+                                  cancel_remind_for_delete,
+                                  commit_remind_for_delete,
+                                  confirm_remind_for_delete, dontknow,
+                                  greet_user, join_user, logger, reminder_add,
+                                  reminder_add_comment, reminder_add_date,
+                                  reminder_skip_comment, reminds_list,
+                                  unjoin_user)
 from settings import connect_settings, settings
-from bothandlers.handlers import greet_user, join_user, reminder_add,\
-    reminds_list, reminder_add_date, calendar_add_date,\
-    calendar_add_day, calendar_add_month, calendar_add_year,\
-    calendar_add_hours, calendar_add_minutes, reminder_add_comment,\
-    reminder_skip_comment, confirm_remind_for_delete,\
-    commit_remind_for_delete, cancel_remind_for_delete, dontknow, unjoin_user,\
-    logger
 
 
 def main():

@@ -1,10 +1,10 @@
 import logging
 import logging.config
-
 from datetime import datetime, timedelta
+
 from sqlalchemy.exc import SQLAlchemyError
 
-from database.modeldb import database_session, User, ReminderData
+from database.modeldb import ReminderData, User, database_session
 from settings import settings
 
 logging.config.fileConfig('logging.cfg')
@@ -12,6 +12,15 @@ logger = logging.getLogger('BotApp')
 
 
 def try_to_commit(session):
+    """Try commit to database.
+    
+    Arguments:
+        session - database session
+    
+    Returns:
+        True -- Data saved to database.
+        False -- Error while saving data to database. Write error to log file.
+    """    
     try:
         session.commit()
         return True

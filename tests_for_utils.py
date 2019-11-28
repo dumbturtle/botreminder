@@ -1,7 +1,9 @@
 import unittest
 from datetime import datetime, timedelta
 
-from bothandlers.utils import check_date, delete_user_from_database, add_user_to_database, check_user_in_database
+from bothandlers.utils import (add_user_to_database, check_date,
+                               check_user_in_database,
+                               delete_user_from_database)
 
 
 class BotHandlersTestCheckDate(unittest.TestCase):
