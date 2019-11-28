@@ -25,8 +25,8 @@ class BotHandlersTest_check_date(unittest.TestCase):
         self.assertFalse(check_date(date))
     
     def test_error_date(self):
-        date = {'date': '25-  11-2019', 'hours': '15', 'minutes': '35'}
-        function_result = "Error: time data '25-  11-2019 15:35' does not match format '%d-%m-%Y %H:%M'" 
+        date = {'date': 'TestTest', 'hours': '15', 'minutes': '35'}
+        function_result = "Error: time data 'TestTest 15:35' does not match format '%d-%m-%Y %H:%M'" 
         self.assertEqual(check_date(date), function_result)
 
 class BotHandlersTest_add_user_to_database(unittest.TestCase):
