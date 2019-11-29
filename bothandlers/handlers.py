@@ -14,7 +14,7 @@ from bothandlers.keyboards import (remind_confirm_for_delete_keyboard,
 from bothandlers.utils import (add_user_to_database, check_date,
                                check_user_in_database,
                                delete_user_from_database, logger,
-                               remind_delete, remind_list_for_delete,
+                               remind_delete, remind_for_delete_information,
                                remind_list_message, reminder_add_database,
                                reminds_list_database)
 from settings import settings
@@ -32,10 +32,11 @@ def greet_user(bot, update, user_data):
 
 
 def join_user(bot, update, user_data):
-    commit_status = add_user_to_database(
-        update.effective_user.id, update.effective_user.first_name,
-        update.effective_user.last_name, update.effective_user.username,
-        update.message.chat_id)
+    commit_status = add_user_to_database(update.effective_user.id, 
+                                         update.effective_user.first_name,
+                                         update.effective_user.last_name, 
+                                         update.effective_user.username,
+                                         update.message.chat_id)
     if commit_status:
         text_message = settings.ADD_USER
     elif not commit_status:
@@ -173,7 +174,7 @@ def reminder_skip_comment(bot, update, user_data):
 
 def confirm_remind_for_delete(bot, update, user_data):
     user_data["number_remind_for_delete"] = update.message.text
-    remind_for_delete = remind_list_for_delete(user_data["number_remind_for_delete"])
+    remind_for_delete = remind_for_delete_information(user_data["number_remind_for_delete"])
     
     if remind_for_delete == "No remind":
         text_message = settings.NO_REMIND
