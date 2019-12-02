@@ -1,6 +1,7 @@
 import logging
 import logging.config
 from datetime import datetime, timedelta
+from typing import Optional
 
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -11,18 +12,13 @@ logging.config.fileConfig('logging.cfg')
 logger = logging.getLogger('BotApp')
 
 
-def try_to_commit(session):
-    """Try commit to database.
-
-    If data saved to database return True.
-    If an error occurs while writing to the database is return False
-    and error writting to logfile.
+def try_to_commit(session) -> bool:
+    '''Try commit to database.
 
     :param session: database session
-    :type session: sqlalchemy.orm.session.Session
-    :return: True/False
-    :rtype: boolean
-    """    
+    :return: If data saved to database return True. If an error occurs while writing 
+             to the database is return False and error writting to logfile.
+    '''    
     try:
         session.commit()
         return True
@@ -30,45 +26,51 @@ def try_to_commit(session):
         logger.error(settings.BOT_ERROR_COMMIT)
         return False
 
-
-def check_date(user_data):
-    """Check date for correctness.
+def convert_date(user_data: dict) -> Optional[datetime]:
+    '''Convert date from dictionary to datetime object.
     
-    If the date is in the future and the conversion occurred without errors, date is returned.
-    If the user passed the date in the past, False is returned.
-    If an error occurred during the conversion, error string is returned.
-
-    :param user_data: Containing date and time.
-    :type user_data: dict
-    :return:Date datetime. 
-    :rtype: datetime
-    :return:False 
-    :rtype:boolen. 
-    :return: Error
-    :type: string  
-    """
-    today_date = datetime.today()
-    
-    if "day" in user_data:
+    :param user_data: The date and time to trigger reminders.
+    :return: In case of a successful conversion, contains the date and time in a datetime.
+    '''
+    if 'day' in user_data:
         user_data['date'] = '{}-{}-{} {}:{}'.format(
-            user_data["day"], user_data["month"], user_data["year"],
-            user_data["hours"], user_data["minutes"])
+            user_data['day'], user_data['month'], user_data['year'],
+            user_data['hours'], user_data['minutes'])
     else:
-        user_data['date'] = '{} {}:{}'.format(user_data["date"], user_data["hours"], user_data["minutes"])
+        user_data['date'] = '{} {}:{}'.format(user_data['date'], user_data['hours'], user_data['minutes'])
     try:
-        date_for_check = datetime.strptime(user_data["date"], "%d-%m-%Y %H:%M")
-        if date_for_check > today_date:
-            return date_for_check
-            
-        else:
-            return False
+        date_for_convert = datetime.strptime(user_data['date'], '%d-%m-%Y %H:%M')
+        return date_for_convert
     except ValueError as error:
         logger.error(error)
-        return 'Error: {}'.format(error)
+        return None
+
+
+def check_date(redimnder_date: datetime)-> Optional[datetime]:
+    '''Checks that the time and date in the future.
+    
+    If the date is in the future, date is returned.
+    If the user passed the date in the past, None is returned.
+
+    :param redimnder_date: Containing date and time.
+    :return: If future time returns time and date. 
+    '''
+    today_date = datetime.today()
+    if redimnder_date > today_date:
+        return redimnder_date
+    else:
+        return None
+
+def get_information_about_user(telegramm_user_id: int)-> Optional[str]:            
+    information_about_user = database_session.query(
+        User
+    ).filter(
+        User.telegramm_user_id == telegramm_user_id
+    ).all()
 
 
 def add_user_to_database(telegramm_user_id, first_name, last_name, username, chat_id):
-    """Add a new user to the database.
+    '''Add a new user to the database.
     If the user is in the database, return his data. 
     If the user is not in the database, then add the user to the database.
     If adding a user to the database was successful, return True.
@@ -88,13 +90,14 @@ def add_user_to_database(telegramm_user_id, first_name, last_name, username, cha
     :rtype: boolen 
     :return: Information about user
     :rtype: string
-    """
+    '''
     information_about_user = database_session.query(
         User
     ).filter(
         User.telegramm_user_id == telegramm_user_id
     ).all()
-    
+    print(information_about_user)
+    print(type(information_about_user))
     if information_about_user is not None:
         information_about_user = User(telegramm_user_id, first_name, last_name, username, chat_id)
         database_session.add(information_about_user)
@@ -104,7 +107,7 @@ def add_user_to_database(telegramm_user_id, first_name, last_name, username, cha
 
 
 def delete_user_from_database(telegramm_user_id):
-    """Delete user from database.
+    '''Delete user from database.
     
     User removed from database, return True
     An error occurred while deleting, return False
@@ -116,7 +119,7 @@ def delete_user_from_database(telegramm_user_id):
     :rtype: boolen.
     :return: 'No user'
     :rtype: string 
-    """
+    '''
     information_about_user = database_session.query(
         User
     ).filter(
@@ -135,7 +138,7 @@ def delete_user_from_database(telegramm_user_id):
 
 
 def check_user_in_database(telegramm_user_id):
-    """Check user in database.
+    '''Check user in database.
     If the user is in the database, full information about him is returned.
     If no user in database, return string 'NO USER'.
    
@@ -145,7 +148,7 @@ def check_user_in_database(telegramm_user_id):
     :rtype: string
     :return: None
     :rtype: None
-    """
+    '''
     information_about_user = database_session.query(
         User.first_name
     ).filter(
@@ -155,7 +158,7 @@ def check_user_in_database(telegramm_user_id):
 
 
 def reminder_add_database(telegramm_user_id, comment, date_remind, status):
-    """Adding a new reminder to the database.
+    '''Adding a new reminder to the database.
     
     If reminder add to database, returned True.
     If an error occurred while add reimnder to database, return False.
@@ -170,7 +173,7 @@ def reminder_add_database(telegramm_user_id, comment, date_remind, status):
     :type status: string
     :return: True/False 
     :rtype: boolen
-    """
+    '''
     user_id = database_session.query(
         User.id
     ).filter(
@@ -184,7 +187,7 @@ def reminder_add_database(telegramm_user_id, comment, date_remind, status):
 
 
 def reminds_list_database(telegramm_user_id):
-    """Returns a list of user reminders.
+    '''Returns a list of user reminders.
     
     If redimnder in database, return user reminder information. 
     If reminder list is empty, return None.
@@ -195,7 +198,7 @@ def reminds_list_database(telegramm_user_id):
     :rtype: string. 
     :return: 'No remind'
     :rtype: string
-    """
+    '''
     user_id = database_session.query(
         User.id
     ).filter(
@@ -211,7 +214,7 @@ def reminds_list_database(telegramm_user_id):
 
 
 def remind_for_delete_information(remind_id):
-    """Return information about reminder for delete.
+    '''Return information about reminder for delete.
     
     Returned information about reminder.
     If information of reminder is empty? return 'No remind'
@@ -222,7 +225,7 @@ def remind_for_delete_information(remind_id):
     :rtype: string. 
     :return: 'No remind'
     :rtype: string. 
-    """
+    '''
     remind = database_session.query(
         ReminderData
     ).filter(
@@ -233,7 +236,7 @@ def remind_for_delete_information(remind_id):
 
 
 def remind_delete(remind_id):
-    """Removing a reminder from the database.
+    '''Removing a reminder from the database.
 
     If reminder deleted from database, return True
     If an error occurred while deleting the reminder from the database, return False.
@@ -245,7 +248,7 @@ def remind_delete(remind_id):
     :rtype: boolen
     :return: None 
     :rtype: None
-    """
+    '''
     remind = database_session.query(
         ReminderData
     ).filter(
@@ -264,7 +267,7 @@ def remind_delete(remind_id):
 
 
 def remind_list_message(list_of_reminds):
-    """Generates a message text for the user from of the list reminders.
+    '''Generates a message text for the user from of the list reminders.
     
     Return text message for the user of the list reminders.
     
@@ -272,7 +275,7 @@ def remind_list_message(list_of_reminds):
     :type list_of_reminds: list
     :return: text_message
     :rtype: string
-    """
+    '''
     text_message = ''
     
     for remind in list_of_reminds:
