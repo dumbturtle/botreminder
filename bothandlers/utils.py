@@ -13,13 +13,15 @@ logger = logging.getLogger('BotApp')
 
 def try_to_commit(session):
     """Try commit to database.
-    
-    Arguments:
-        session - database session
-    
-    Returns:
-        True -- type:boolen. Data saved to database.
-        False -- type:boolen. Error while saving data to database. Error is writing to log file.
+
+    If data saved to database return True.
+    If an error occurs while writing to the database is return False
+    and error writting to logfile.
+
+    :param session: database session
+    :type session: sqlalchemy.orm.session.Session
+    :return: True/False
+    :rtype: boolean
     """    
     try:
         session.commit()
@@ -32,13 +34,18 @@ def try_to_commit(session):
 def check_date(user_data):
     """Check date for correctness.
     
-    Arguments:
-        user_data - User data containing time.
-    
-    Returns:
-        Date - type: datetime. If the date is in the future and the conversion occurred without errors, the date is returned.
-        False - type:boolen. If the user passed the date in the past.
-        Error - type: string. If an error occurred during the conversion. 
+    If the date is in the future and the conversion occurred without errors, date is returned.
+    If the user passed the date in the past, False is returned.
+    If an error occurred during the conversion, error string is returned.
+
+    :param user_data: Containing date and time.
+    :type user_data: dict
+    :return:Date datetime. 
+    :rtype: datetime
+    :return:False 
+    :rtype:boolen. 
+    :return: Error
+    :type: string  
     """
     today_date = datetime.today()
     
@@ -63,20 +70,24 @@ def check_date(user_data):
 def add_user_to_database(telegramm_user_id, first_name, last_name, username, chat_id):
     """Add a new user to the database.
     If the user is in the database, return his data. 
-    If the user is not in the database, then add the user to the database
+    If the user is not in the database, then add the user to the database.
+    If adding a user to the database was successful, return True.
+    If adding a user to the database was not successful, return False.
     
-    Arguments:
-        telegramm_user_id - Telegram user ID.
-        first_name - Name
-        last_name - Surname
-        username - Telegramm username
-        chat_id - User telegramm chat ID  
-    
-    Returns:
-        True - type: boolen. If adding a user to the database was successful.
-        False - type: boolen. If adding a user to the database was not successful.
-        Information about user - type: string. If the user is in the database, 
-            then return information about him.
+    :param telegramm_user_id: Telegram user ID.
+    :type telegramm_user_id: int
+    :param first_name: Name
+    :type first_name: string
+    :param last_name: Surname
+    :type last_name: string
+    :param username: Telegramm username
+    :type username: string
+    :param chat_id: User telegramm chat ID 
+    :type chat_id: int 
+    :return: True/False 
+    :rtype: boolen 
+    :return: Information about user
+    :rtype: string
     """
     information_about_user = database_session.query(
         User
@@ -94,14 +105,17 @@ def add_user_to_database(telegramm_user_id, first_name, last_name, username, cha
 
 def delete_user_from_database(telegramm_user_id):
     """Delete user from database.
-   
-    Arguments:
-        telegramm_user_id - Telegram user ID.
     
-    Returns:
-        True - type: boolen. User removed from database
-        False - type: boolen. An error occurred while deleting.
-        String - type: string. If no user in database, return string 'NO USER'.
+    User removed from database, return True
+    An error occurred while deleting, return False
+    If no user in database, return string 'NO USER'.
+    
+    :param telegramm_user_id: Telegram user ID
+    :type telegramm_user_id: int
+    :return: True/False
+    :rtype: boolen.
+    :return: 'No user'
+    :rtype: string 
     """
     information_about_user = database_session.query(
         User
@@ -121,15 +135,16 @@ def delete_user_from_database(telegramm_user_id):
 
 
 def check_user_in_database(telegramm_user_id):
-    """Delete user from database.
+    """Check user in database.
+    If the user is in the database, full information about him is returned.
+    If no user in database, return string 'NO USER'.
    
-    Arguments:
-        telegramm_user_id - Telegram user ID.
-    
-    Returns:
-        True - type: boolen. User removed from database
-        False - type: boolen. An error occurred while deleting.
-        String - type: string. If no user in database, return string 'NO USER'.
+    :param telegramm_user_id: Telegram user ID
+    :type telegramm_user_id: int
+    :return: information_about_user 
+    :rtype: string
+    :return: None
+    :rtype: None
     """
     information_about_user = database_session.query(
         User.first_name
@@ -141,16 +156,20 @@ def check_user_in_database(telegramm_user_id):
 
 def reminder_add_database(telegramm_user_id, comment, date_remind, status):
     """Adding a new reminder to the database.
-   
-    Arguments:
-        telegramm_user_id - Telegram user ID.
-        comment - Reminder Comment.
-        date_remind - Date Reminder.
-        status - Reminder status(Active/Deactive).
     
-    Returns:
-        True - type: boolen. Reminder add to database.
-        False - type: boolen. An error occurred while add reimnder to database.
+    If reminder add to database, returned True.
+    If an error occurred while add reimnder to database, return False.
+
+    :param telegramm_user_id: Telegram user ID
+    :type telegramm_user_id: int
+    :param comment: Reminder Comment
+    :type comment: string
+    :param date_remind: Date Reminder
+    :type date_remind: datetime
+    :param status: Reminder status(Active/Deactive)
+    :type status: string
+    :return: True/False 
+    :rtype: boolen
     """
     user_id = database_session.query(
         User.id
@@ -166,13 +185,16 @@ def reminder_add_database(telegramm_user_id, comment, date_remind, status):
 
 def reminds_list_database(telegramm_user_id):
     """Returns a list of user reminders.
-   
-    Arguments:
-        telegramm_user_id - Telegram user ID.
-         
-    Returns:
-        Information_about_reminder - type: string. User reminder information.
-        No remind - type: string. Reminder list is empty.
+    
+    If redimnder in database, return user reminder information. 
+    If reminder list is empty, return None.
+
+    :param telegramm_user_id: Telegram user ID
+    :type telegramm_user_id: int
+    :return: Information_about_reminder
+    :rtype: string. 
+    :return: 'No remind'
+    :rtype: string
     """
     user_id = database_session.query(
         User.id
@@ -190,13 +212,16 @@ def reminds_list_database(telegramm_user_id):
 
 def remind_for_delete_information(remind_id):
     """Return information about reminder for delete.
-   
-    Arguments:
-        remind_id - Remind ID in database.
-         
-    Returns:
-        remind - type: string. Information about reminder.
-        No remind - type: string. Information of reminder is empty.
+    
+    Returned information about reminder.
+    If information of reminder is empty? return 'No remind'
+    
+    :param remind_id: Remind ID in database.
+    :type remind_id: int
+    :return: remind
+    :rtype: string. 
+    :return: 'No remind'
+    :rtype: string. 
     """
     remind = database_session.query(
         ReminderData
@@ -204,19 +229,22 @@ def remind_for_delete_information(remind_id):
         ReminderData.id == remind_id
     ).first()
     
-    return remind if remind is not None else "No remind"
+    return remind if remind is not None else 'No remind'
 
 
 def remind_delete(remind_id):
     """Removing a reminder from the database.
+
+    If reminder deleted from database, return True
+    If an error occurred while deleting the reminder from the database, return False.
+    If reminder not found in database, return None.
    
-    Arguments:
-        remind_id - Remind ID in database.
-         
-    Returns:a
-        True - type: boolen. Reminder deleted from database.
-        False - type: boolen. An error occurred while deleting the reminder from the database.
-        None  - type: None. Reminder not found in database.
+    :param remind_id: Remind ID in database.
+    :type remind_id: int
+    :return: True/False
+    :rtype: boolen
+    :return: None 
+    :rtype: None
     """
     remind = database_session.query(
         ReminderData
@@ -237,12 +265,13 @@ def remind_delete(remind_id):
 
 def remind_list_message(list_of_reminds):
     """Generates a message text for the user from of the list reminders.
-   
-    Arguments:
-        list_of_reminds - User Reminder List.
-         
-    Returns:
-        text_message - type: string. Text message for the user of the list reminders.
+    
+    Return text message for the user of the list reminders.
+    
+    :param list_of_reminds: User Reminder List.
+    :type list_of_reminds: list
+    :return: text_message
+    :rtype: string
     """
     text_message = ''
     
