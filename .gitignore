@@ -25,4 +25,5 @@ config.py
 downloads/
 test.py
 !logging.cfg
+.theia/
 
