@@ -200,10 +200,6 @@ def reminder_get_for_database(remind_id: int) -> dict:
 
 def reminder_delete(remind_id: int) -> bool:
     '''Removing a reminder from the database.
-
-    If reminder deleted from database, return True
-    If an error occurred while deleting the reminder from the database, return False.
-    If reminder not found in database, return None.
    
     :param remind_id: Remind ID in database.
     :return: Returns True if the reminder is deleted from the database. Returns 
@@ -221,16 +217,14 @@ def reminder_delete(remind_id: int) -> bool:
     return try_to_commit(database_session)
 
 
-def remind_list_message(list_of_reminds):
+def remind_list_message(list_of_reminds: list) -> str:
     '''Generates a message text for the user from of the list reminders.
     
     Return text message for the user of the list reminders.
     
     :param list_of_reminds: User Reminder List.
-    :type list_of_reminds: list
-    :return: text_message
-    :rtype: string
+    :return: Return text message for the user of the list reminders.
     '''
-    text_message = settings.REMINDER_LIST_MESSAGE.format(id, date_remind, comment, remind.status).join(list_of_reminds)
+    text_message = (' ').join(list_of_reminds)
     
     return text_message
