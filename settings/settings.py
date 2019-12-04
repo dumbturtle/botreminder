@@ -23,7 +23,7 @@ ALREADY_EXISTS_USER = '{}, уже есть!'
 REMINDER_STATUS_ON_ADD = 'active'
 
 REMINDER_ALL_LIST_MESSAGE = 'Список напоминаний'
-REMINDER_LIST_MESSAGE = '#{} Дата:{}. Комментарий:{}. Статус {}.\n'
+REMINDER_LIST_MESSAGE = '#{} Дата:{}. Комментарий:{}. Статус {}.'
 CHOOSE_REMIND_FOR_DELETE = "Введите номер напоминания которое хотите удалить. Номер указан после '#'"
 CONFIRM_REMIND_FOR_DELETE = "Вы точно хотите удалить напоминание: {}"
 NO_REMIND = "Нет такого напоминания!"
