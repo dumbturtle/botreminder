@@ -1,7 +1,7 @@
 import logging
 import logging.config
 from datetime import datetime, timedelta
-from typing import Optional, Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -56,7 +56,7 @@ def check_date(redimnder_date: datetime)-> bool:
     :return: If future time returns time and date. 
     """
     today_date = datetime.today()
-    
+
     return True if redimnder_date > today_date else False
 
 def get_information_about_user(telegramm_user_id: int)-> Optional[Dict[str, Union[str, int]]]:   
@@ -175,7 +175,7 @@ def reminder_list_from_database(telegramm_user_id: int) -> List[Optional[Dict[st
                             'status' : reminder.status} for reminder in list_reminder_database]
     return user_list_reminder
 
-def reminder_get_for_database(remind_id: int) -> Dict[str, Union[str, int, datetime, None]] :
+def reminder_get_from_database(remind_id: int) -> Dict[str, Union[str, int, datetime, None]] :
     """Return information about reminder for delete.
     
     :param remind_id: Remind ID in database.
@@ -187,36 +187,41 @@ def reminder_get_for_database(remind_id: int) -> Dict[str, Union[str, int, datet
     ).filter(
         ReminderData.id == remind_id
     ).first()
-    reminder = {
-                'id' : reminder_from_database.id, 
-                'user_id' : reminder_from_database.user_id,
-                'comment' : reminder_from_database.comment,
-                'date_remind' : reminder_from_database.date_remind,
-                'status' : reminder_from_database.status
-                }
+    if reminder_from_database is not None:
+        reminder = {
+                    'id' : reminder_from_database.id, 
+                    'user_id' : reminder_from_database.user_id,
+                    'comment' : reminder_from_database.comment,
+                    'date_remind' : reminder_from_database.date_remind,
+                    'status' : reminder_from_database.status
+                    }
+    else:
+        reminder = {
+                    'id' : None
+                    }
     return reminder
 
 
-def reminder_delete(remind_id: int) -> bool:
+def reminder_delete(reminder_id: int) -> bool:
     """Removing a reminder from the database.
    
-    :param remind_id: Remind ID in database.
+    :param reminder_id: Remind ID in database.
     :return: Returns True if the reminder is deleted from the database. Returns 
                      False if an error occurred while deleting the reminder 
                      from the database.
     """
-    if reminder_get_for_database(remind_id).get(remind_id) is None:
+    if reminder_get_from_database(reminder_id).get('id') is None:
+        logger.error(f'Cannot deleting reminder {reminder_id}. Not found!')
         return False
     database_session.query(
         ReminderData
     ).filter(
-        ReminderData.id == remind_id
+        ReminderData.id == reminder_id
     ).delete()
     
     return try_to_commit(database_session)
 
-
-def remind_list_message(list_of_reminds: list) -> str:
+def reminders_list_message(list_of_reminders: List[Dict[str, Union[str, int, datetime]]]) -> str:
     """Generates a message text for the user from of the list reminders.
     
     Return text message for the user of the list reminders.
@@ -225,7 +230,7 @@ def remind_list_message(list_of_reminds: list) -> str:
     :return: Return text message for the user of the list reminders.
     """
     text_message = '\n'.join(
-        [settings.REMINDER_LIST_MESSAGE.format(remind.id, remind.date_remind,
-            remind.comment, remind.status) for remind in list_of_reminds])
+        [settings.REMINDER_LIST_MESSAGE.format(remind.get('id'), remind.get('date_remind'),
+            remind.get('comment'), remind.get('status')) for remind in list_of_reminders])
     
     return text_message

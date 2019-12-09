@@ -5,13 +5,13 @@ from settings import settings
 
 
 def starting_keyboard():
-    starting_keyboard = ReplyKeyboardMarkup([['Хочу пользоваться!', 'Расхотел']], resize_keyboard=True)
+    starting_keyboard = ReplyKeyboardMarkup([['Хочу пользоваться!']], resize_keyboard=True)
     
     return starting_keyboard
 
 
 def reminder_keyboard():
-    work_keyboard = ReplyKeyboardMarkup([['Добавить напоминание', 'Список напоминаний', 'Удалить напоминание']], resize_keyboard=True)
+    work_keyboard = ReplyKeyboardMarkup([['Добавить напоминание', 'Список напоминаний', 'Удалить напоминание', 'Расхотел']], resize_keyboard=True)
     
     return work_keyboard
 
