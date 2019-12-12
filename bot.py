@@ -2,20 +2,24 @@ from telegram.ext import (CallbackQueryHandler, CommandHandler,
                           ConversationHandler, Filters, MessageHandler,
                           RegexHandler, Updater)
 
-from bothandlers.handlers import (manual_add_date, manual_add_date_day,
-                                 manual_add_date_hour, manual_add_date_minute,
-                                 manual_add_date_month, manual_add_date_year,
+from bothandlers.handlers import (dontknow, greet_user, join_user, logger,
+                                  manual_add_date, manual_add_date_day,
+                                  manual_add_date_hour, manual_add_date_minute,
+                                  manual_add_date_month, manual_add_date_year,
+                                  predefined_add_date, reminder_add,
+                                  reminder_add_comment,
+                                  reminder_cancel_for_delete,
+                                  reminder_commit_for_delete,
                                   reminder_confirm_for_delete,
-                                  reminder_commit_for_delete, 
-                                  reminder_cancel_for_delete, dontknow,
-                                  greet_user, join_user, logger, reminder_add,
-                                  reminder_add_comment, reminder_skip_comment,
-                                  reminder_list, unjoin_user, predefined_add_date,
-                                  reminder_deleting_list)
+                                  reminder_deleting_list, reminder_list,
+                                  reminder_skip_comment, unjoin_user)
 from settings import connect_settings, settings
 
 
-def main():
+def main() -> None:
+    """The main function for processing messages from the user.
+
+    """
     mybot = Updater(connect_settings.API_KEY, request_kwargs={'proxy_url': connect_settings.PROXY, 'urllib3_proxy_kwargs': connect_settings.PROXY_ACCOUNT})
     dp = mybot.dispatcher
     logger.info(settings.BOT_RUN)

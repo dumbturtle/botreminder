@@ -1,5 +1,6 @@
 
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, create_engine
+from sqlalchemy import (Column, DateTime, ForeignKey, Integer, String,
+                        create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 

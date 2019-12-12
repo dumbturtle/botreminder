@@ -1,19 +1,23 @@
-
 import logging
 import logging.config
-import schedule
 from datetime import datetime, timedelta
+
+import schedule
 from sqlalchemy.exc import SQLAlchemyError
 from telegram import Bot, utils
 
+from database.modeldb import ReminderData, User, database_session
 from settings import connect_settings, settings
-from database.modeldb import database_session, User, ReminderData
 
 logging.config.fileConfig('logging.cfg')
 logger = logging.getLogger('RemindApp')
 
 
-def check_time_reminder():
+def check_time_reminder() -> None:
+    """The function check base with reminders. 
+       If there is a match in time, the message sending 
+       function is called.
+    """
     reminders_list = database_session.query(
         ReminderData
     ).filter(
@@ -27,7 +31,9 @@ def check_time_reminder():
             change_reminder_status(reminder.id)
 
 
-def sending_notification_reminder(user_id, reminder_date, comment):
+def sending_notification_reminder(user_id: int, reminder_date: datetime, comment: str) -> None:
+    """The function sends a message with reminder to the user.
+    """
     user_information = database_session.query(
         User
     ).filter(
@@ -40,7 +46,10 @@ def sending_notification_reminder(user_id, reminder_date, comment):
     reminder_bot.sendMessage(chat_id=user_information.chat_id, text=message_text)
 
 
-def change_reminder_status(remind_id):
+def change_reminder_status(remind_id: int) -> None:
+    """The function changes the status in the database 
+       on "disable" after sending a message with a reminder.
+    """
     database_session.query(
         ReminderData
     ).filter(
@@ -53,7 +62,10 @@ def change_reminder_status(remind_id):
         logger.error("Commit error")
 
 
-def main_reminds_handlers():
+def main_reminds_handlers() -> None:
+    """The function launches the database 
+       check function every minute.
+    """
     logger.info('Reminds Handlers Start')
     schedule.every().minute.at(":01").do(check_time_reminder)
     while True:

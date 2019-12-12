@@ -1,3 +1,4 @@
+import calendar
 import logging
 import logging.config
 from datetime import datetime, timedelta
@@ -58,6 +59,7 @@ def check_date(redimnder_date: datetime)-> bool:
     today_date = datetime.today()
 
     return True if redimnder_date > today_date else False
+
 
 def get_information_about_user(telegramm_user_id: int)-> Optional[Dict[str, Union[str, int]]]:   
     """ Get information about user from database.
@@ -234,3 +236,82 @@ def reminders_list_message(list_of_reminders: List[Dict[str, Union[str, int, dat
             remind.get('comment'), remind.get('status')) for remind in list_of_reminders])
     
     return text_message
+
+
+def month_remaining(reminder_date_month: str) -> int:
+    """The function returns the number of month in the year at the time the 
+       reminder was created.
+    :param reminder_date: Date of reminder
+    :return: The number of month remaining.
+    """
+    if datetime.now().year == int(reminder_date_month):
+            return datetime.now().month
+    else:
+        return 1
+
+
+def day_remaining(reminder_date_day: Dict[str, str]) -> Dict[str, int]:
+    """The function returns the period of days in the reminder month.
+
+    :param reminder_date: Date of reminder
+    :return: The period of days for this month reminder.
+    """ 
+    days_period= {}
+    today_date = datetime.now()
+    
+    if int(reminder_date_day.get('month')) == int(today_date.month):
+        days_period['start'] = today_date.day
+    else:
+        days_period['start'] = 1
+    
+    year = int(reminder_date_day.get('year'))
+    month = int(reminder_date_day.get('month'))
+
+    start_month_day, days_period['end'] = calendar.monthrange(year, month)
+
+    return days_period
+    
+
+def hour_remaining(reminder_date_hour: str) -> int:
+    """The function returns the number of hours in the date at the time the 
+       reminder was created.
+    :param reminder_date: Date of reminder
+    :return: The number of hours remaining for this date.
+    """
+    today_date = datetime.now()
+    try:
+        convert_reminder_date = datetime.strptime(reminder_date_hour, '%d-%m-%Y')
+        if today_date.replace(hour=0, minute=0, second=0, microsecond=0) == convert_reminder_date:
+            return datetime.now().hour
+        else:
+            return 0
+    except ValueError as error:
+        logger.error(error)
+        return 0
+
+
+def minute_remaining(reminder_user_data: Dict[str, str], step: int) -> int:
+    """The function returns the number of minutes 
+       in the hour with a certain step.
+
+    :param reminder_date: Date of reminder
+    :return: The number of hours remaining for this date.
+    """
+    today_date = datetime.now()
+    if 'day' in reminder_user_data:
+        reminder_user_data['date'] = '{}-{}-{}'.format(
+            reminder_user_data['day'], reminder_user_data['month'], reminder_user_data['year'])
+    try:
+        convert_reminder_date = datetime.strptime(
+            reminder_user_data.get('date'), '%d-%m-%Y')
+        if today_date.replace(
+            minute=0, second=0, microsecond=0) == convert_reminder_date.replace(
+                hour=int(reminder_user_data.get('hours', 0)), minute=0, second=0, microsecond=0):
+                rate = (int(datetime.now().minute) // int(step)) + 1
+                start_minute = rate * step
+                return start_minute
+        else:
+            return 0
+    except ValueError as error:
+        logger.error(error)
+        return 0

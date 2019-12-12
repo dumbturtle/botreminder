@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from telegram import (
     Bot, InlineKeyboardButton, InlineKeyboardMarkup, Message, ParseMode,
@@ -9,17 +9,17 @@ from telegram.ext import (CallbackQueryHandler, CommandHandler,
 
 from bothandlers.keyboards import (remind_confirm_for_delete_keyboard,
                                    remind_list_for_delete_keyboard,
-                                   reminder_add_day_keyboard,
+                                   reminder_add_date_keyboard,
                                    reminder_add_digital_period_keyboard,
                                    reminder_keyboard, starting_keyboard)
 from bothandlers.utils import (add_user_to_database, check_date, convert_date,
-                               delete_user_from_database,
-                               get_information_about_user, logger,
-                               reminder_add_new_to_database,
+                               day_remaining, delete_user_from_database,
+                               get_information_about_user, hour_remaining,
+                               logger, minute_remaining, month_remaining,
+                               reminder_add_new_to_database, reminder_delete,
                                reminder_get_from_database,
                                reminder_list_from_database,
-                               reminders_list_message,
-                               reminder_delete)
+                               reminders_list_message)
 from settings import settings
 
 
@@ -91,7 +91,7 @@ def reminder_add(bot: Bot, update: Update, user_data: dict) -> Message:
              to enter a date. 
     """
     text_message = settings.ENTER_DATE
-    update.message.reply_text(text_message, reply_markup=reminder_add_day_keyboard())
+    update.message.reply_text(text_message, reply_markup=reminder_add_date_keyboard())
     
     return "reminder_add_date"
 
@@ -107,7 +107,7 @@ def predefined_add_date(bot: Bot, update: Update, user_data: dict) -> Message:
     """
     user_data['date'] = update.message.text
     text_message = settings.ENTER_HOURS
-    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1))
+    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(hour_remaining(user_data['date']), 23, 10, 1))
 
     return "manual_add_date_hour"
 
@@ -123,7 +123,9 @@ def manual_add_date(bot: Bot, update: Update, user_data: dict) -> Message:
              to enter a day. 
     """
     text_message = settings.ENTER_YEAR
-    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(2019, 2022, 1, 1))
+    start_year = datetime.now().year
+    end_year = (datetime.now() + timedelta(days=1095)).year
+    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(start_year, end_year, 1, 1))
     
     return "manual_add_date_year"
 
@@ -139,8 +141,9 @@ def manual_add_date_year(bot: Bot, update: Update, user_data: dict) -> Message:
              to enter a hour. 
     """
     user_data['year'] = update.message.text
+    start_month = month_remaining(user_data['year'])
     text_message = settings.ENTER_MONTH
-    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(1, 12, 10, 1))
+    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(start_month, 12, 10, 1))
     
     
     return "manual_add_date_month"
@@ -156,9 +159,12 @@ def manual_add_date_month(bot: Bot, update: Update, user_data: dict) -> Message:
     :return: The function sends a message to the user with a request 
              to enter a month. 
     """
-    text_message = settings.ENTER_DAY
     user_data['month'] = update.message.text
-    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(1, 31, 10, 1))
+    period_days = day_remaining(user_data)
+    text_message = settings.ENTER_DAY
+    update.message.reply_text(
+        text_message, reply_markup=reminder_add_digital_period_keyboard(
+            period_days.get('start'), period_days.get('end'), 10, 1))
     
     return "manual_add_date_day"
 
@@ -175,7 +181,8 @@ def manual_add_date_day(bot: Bot, update: Update, user_data: dict) -> Message:
     """
     text_message = settings.ENTER_HOURS
     user_data['day'] = update.message.text
-    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(0, 23, 10, 1))
+    start_hour = hour_remaining('{}-{}-{}'.format(user_data['day'], user_data['month'], user_data['year']))
+    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(start_hour, 23, 10, 1))
     
     return "manual_add_date_hour"
     
@@ -191,8 +198,9 @@ def manual_add_date_hour(bot: Bot, update: Update, user_data: dict) -> Message:
              to enter a minute. 
     """
     user_data['hours'] = update.message.text
+    start_minute = minute_remaining(user_data, 5)
     text_message = settings.ENTER_MINUTES
-    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(0, 59, 10, 5))
+    update.message.reply_text(text_message, reply_markup=reminder_add_digital_period_keyboard(start_minute, 59, 10, 5))
     
     return "manual_add_date_minute"
 
@@ -219,7 +227,7 @@ def manual_add_date_minute(bot: Bot, update: Update, user_data: dict) -> Message
         return "reminder_add_comment"
     else:
         text_message = settings.INVALID_DATE_OR_TIME
-        update.message.reply_text(text_message, reply_markup=reminder_add_day_keyboard())
+        update.message.reply_text(text_message, reply_markup=reminder_add_date_keyboard())
         return "reminder_add_date"
 
 
@@ -246,7 +254,7 @@ def reminder_add_comment(bot: Bot, update: Update, user_data: dict) -> Message:
             return ConversationHandler.END
     else:
         text_message = settings.ADD_ERROR
-        update.message.reply_text(text_message, reply_markup=reminder_add_day_keyboard())
+        update.message.reply_text(text_message, reply_markup=reminder_add_date_keyboard())
         return "reminder_add_date"
     
     
@@ -275,7 +283,7 @@ def reminder_skip_comment(bot: Bot, update: Update, user_data: dict) -> Message:
             return ConversationHandler.END
     else:
         text_message = settings.ADD_ERROR
-        update.message.reply_text(text_message, reply_markup=reminder_add_day_keyboard())
+        update.message.reply_text(text_message, reply_markup=reminder_add_date_keyboard())
         return "reminder_add_date" 
     
 
