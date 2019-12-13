@@ -13,6 +13,14 @@ database_session = database_Session()
 
 
 class User(Base):
+    """The class describes a database model for storing user data.
+        id - Id in database
+        telegramm_user_id - User ID in Telegramm
+        first_name - First name of the user
+        last_name - Last name of the user
+        username - Username in Telegramm
+        chat_id - User Chat ID in Telegramm
+    """
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     telegramm_user_id = Column(Integer)
@@ -36,6 +44,13 @@ class User(Base):
 
 
 class ReminderData(Base):
+    """The class describes a reminder database.
+        id - ID Reminder in Database
+        user_id - User ID of the user who created the reminder.
+        comment - User Comment
+        date_remind - Date Reminder
+        status - Reminder Status(active/deactive)
+    """
     __tablename__ = 'remainders'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, index=True)
