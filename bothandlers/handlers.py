@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Union
 
 from telegram import (
     Bot, InlineKeyboardButton, InlineKeyboardMarkup, Message, ParseMode,

@@ -255,17 +255,14 @@ def day_remaining(reminder_date_day: Dict[str, str]) -> Dict[str, int]:
     :param reminder_date: Date of reminder
     :return: The period of days for this month reminder.
     """ 
-    days_period= {}
+    days_period= {'start': 1}
     today_date = datetime.now()
     
     if int(reminder_date_day.get('month')) == int(today_date.month):
         days_period['start'] = today_date.day
-    else:
-        days_period['start'] = 1
     
     year = int(reminder_date_day.get('year'))
     month = int(reminder_date_day.get('month'))
-
     start_month_day, days_period['end'] = calendar.monthrange(year, month)
 
     return days_period
