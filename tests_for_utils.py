@@ -10,10 +10,10 @@ from bothandlers.utils import (add_user_to_database, check_date, convert_date,
 
 class BotHandlersTestCheckDate(unittest.TestCase):
     def test_convert_date(self):
-        date = {}
-        date['date'] = datetime.strftime(datetime.now() + timedelta(days=1), '%d-%m-%Y')
-        date['hours'] = datetime.now().hour
-        date['minutes'] = datetime.now().minute
+        date = {
+            'date': datetime.strftime(datetime.now() + timedelta(days=1), '%d-%m-%Y'),
+            'hours': datetime.now().hour,
+            'minutes': datetime.now().minute}
         self.assertIsInstance(convert_date(date), datetime)
 
 
@@ -28,7 +28,9 @@ class BotHandlersTestCheckDate(unittest.TestCase):
     
 
     def test_convert_error_date(self):
-        date = {'date': 'TestTest', 'hours': '15', 'minutes': '35'}
+        date = {'date': 'TestTest', 
+                'hours': '15', 
+                'minutes': '35'}
         self.assertEqual(convert_date(date), None)
 
 
@@ -95,39 +97,37 @@ class BotHandlersTestCheckUserInDatabase(unittest.TestCase):
 
 class BotHandlersTestTimeRemaining(unittest.TestCase):
     def test_check_minutes_remaining(self):
-        source_data = {}
         today_date = datetime.now()
-        source_data['date'] = datetime.strftime(today_date, '%d-%m-%Y')
-        source_data['hours'] = datetime.now().hour
-        convert_minute = datetime.now().minute
-        self.assertEqual(minute_remaining(source_data), convert_minute)
+        source_data = {'date': datetime.strftime(today_date, '%d-%m-%Y'),
+                       'hours': datetime.now().hour}
+        step = 5
+        convert_minute = (((datetime.now().minute // step) + 1) * step)
+        self.assertEqual(minute_remaining(source_data, step), convert_minute)
     
     
     def test_check_minutes_remaining_manual(self):
-        source_data = {}
-        source_data['day'] = datetime.now().day
-        source_data['month'] = datetime.now().month
-        source_data['year'] = datetime.now().year
-        source_data['hours'] = datetime.now().hour
-        convert_minute = datetime.now().minute
-        self.assertEqual(minute_remaining(source_data), convert_minute)
+        source_data = {'day': datetime.now().day,
+                       'month': datetime.now().month,
+                       'year': datetime.now().year,
+                       'hours': datetime.now().hour}
+        step = 5
+        convert_minute = (((datetime.now().minute // step) + 1) * step) 
+        self.assertEqual(minute_remaining(source_data, step), convert_minute)
     
     
     def test_check_minutes_remaining_tommorow(self):
-        source_data = {}
-        source_data['day'] = (datetime.now() + timedelta(days=1)).day
-        source_data['month'] = datetime.now().month
-        source_data['year'] = datetime.now().year
-        source_data['hours'] = datetime.now().hour
-        self.assertEqual(minute_remaining(source_data), 0)
+        source_data = {'day': (datetime.now() + timedelta(days=1)).day,
+                       'month': datetime.now().month,
+                       'year': datetime.now().year,
+                       'hours': datetime.now().hour}
+        self.assertEqual(minute_remaining(source_data, 5), 0)
     
     
     def test_check_minutes_remaining_error(self):
-        source_data = {}
         today_date = datetime.now()
-        source_data['date'] = datetime.strftime(today_date, '%d-%M-%Y')
-        source_data['hours'] = datetime.now().hour
-        self.assertEqual(minute_remaining(source_data), 0)
+        source_data = {'date': datetime.strftime(today_date, '%d-%M-%Y'),
+                       'hours': datetime.now().hour}
+        self.assertEqual(minute_remaining(source_data, 5), 0)
     
     def test_check_hours_remaining(self):
         today_date = datetime.now()
@@ -155,12 +155,10 @@ class BotHandlersTestTimeRemaining(unittest.TestCase):
     
     
     def test_check_days_remaining(self):
-        source_date = {}
-        convert_date = {}
-        source_date['year'] = datetime.now().year
-        source_date['month'] = datetime.now().month
-        convert_date['start'] =  datetime.now().day
-        convert_date['end'] = calendar.monthrange(source_date['year'],source_date['month'])[1]
+        source_date = {'year': datetime.now().year,
+                       'month': datetime.now().month}
+        convert_date = {'start': datetime.now().day,
+                        'end': calendar.monthrange(source_date['year'], source_date['month'])[1]}
         self.assertEqual(day_remaining(source_date), convert_date)
 
 

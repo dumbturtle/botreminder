@@ -159,7 +159,6 @@ def reminder_list_from_database(telegramm_user_id: int) -> List[Optional[Dict[st
              with dict of user reminders is returned; if there are no 
              reminders, it is returned None.
     """
-    user_list_reminder = []
     user_id = database_session.query(
         User.id
     ).filter(
@@ -177,7 +176,7 @@ def reminder_list_from_database(telegramm_user_id: int) -> List[Optional[Dict[st
                             'status' : reminder.status} for reminder in list_reminder_database]
     return user_list_reminder
 
-def reminder_get_from_database(remind_id: int) -> Dict[str, Union[str, int, datetime, None]] :
+def reminder_get_from_database(remind_id: int) -> Dict[str, Union[str, int, datetime, None]]:
     """Return information about reminder for delete.
     
     :param remind_id: Remind ID in database.
@@ -245,7 +244,7 @@ def month_remaining(reminder_date_month: str) -> int:
     :return: The number of month remaining.
     """
     if datetime.now().year == int(reminder_date_month):
-            return datetime.now().month
+        return datetime.now().month
     else:
         return 1
 
