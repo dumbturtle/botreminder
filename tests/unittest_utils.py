@@ -142,13 +142,13 @@ class BotHandlersTestTimeRemaining(unittest.TestCase):
         self.assertEqual(hour_remaining(source_date), 0)
     
     
-    def test_check_hours_remaining_tommorow(self):
+    def test_check_hours_remaining_tommorow_error(self):
         today_date = datetime.now()
         source_date = datetime.strftime(today_date, '%d-%M-%Y')
         self.assertEqual(hour_remaining(source_date), 0)
     
 
-    def test_check_hours_remaining_tommorow(self):
+    def test_check_month_remaining_tommorow(self):
         source_date = datetime.now().year
         convert_month = datetime.now().month
         self.assertEqual(month_remaining(source_date), convert_month)
