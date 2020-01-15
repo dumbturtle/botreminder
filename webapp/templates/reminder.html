@@ -1,0 +1,14 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title>Веб версия</title>
+        {% endif %}
+    </head>
+    <body>
+        {% for reminder in reminder_list %}
+        <div><p>{{ reminder }}</p></div>
+        {% endfor %}
+    </body>
+</html>
