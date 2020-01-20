@@ -1,14 +1,11 @@
-<html>
-    <head>
-        {% if title %}
-        <title>{{ title }}</title>
+{% extends "base.html" %}
+{% block content %}
+        {% if user_info.first_name %}
+        <div>{{ user_info.first_name }} {{user_info.last_name}}</div>
         {% else %}
-        <title>Веб версия</title>
+        <div>{{ user_info.username }}</div>
         {% endif %}
-    </head>
-    <body>
         {% for reminder in reminder_list %}
-        <div><p>{{ reminder }}</p></div>
+        <div><p>{{ reminder.id }} - {{ reminder.comment }} - {{ reminder.date_remind }}</p></div>
         {% endfor %}
-    </body>
-</html>
+{% endblock %}

@@ -1,0 +1,18 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title>Веб версия</title>
+        {% endif %}
+    </head>
+    <body>
+    <div>
+        <a href="/index">Домой</a>
+        <a href="/login">Залогиниться</a>
+        <a href="/reminder">Тест</a>
+    </div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>

@@ -9,7 +9,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from database.modeldb import ReminderData, User, database_session
 from settings import settings
 
-logging.config.fileConfig('logging.cfg')
+logging.config.fileConfig('settings/logging.cfg')
 logger = logging.getLogger('BotApp')
 
 

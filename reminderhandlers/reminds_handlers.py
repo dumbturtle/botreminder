@@ -9,7 +9,7 @@ from telegram import Bot, utils
 from database.modeldb import ReminderData, User, database_session
 from settings import connect_settings, settings
 
-logging.config.fileConfig('logging.cfg')
+logging.config.fileConfig('settings/logging.cfg')
 logger = logging.getLogger('RemindApp')
 
 

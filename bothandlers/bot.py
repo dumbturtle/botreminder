@@ -16,7 +16,7 @@ from bothandlers.handlers import (dontknow, greet_user, join_user, logger,
 from settings import connect_settings, settings
 
 
-def main() -> None:
+def botmain() -> None:
     """The main function for processing messages from the user.
 
     """
@@ -85,4 +85,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    botmain()
