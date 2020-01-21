@@ -26,4 +26,5 @@ downloads/
 test.py
 !logging.cfg
 .theia/
+.python-version
 
