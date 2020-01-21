@@ -40,7 +40,7 @@ class User(Base):
     def __repr__(self):
         return "<User {}, {}, {}, {}, {}, {}>".format(
             self.id, self.telegramm_user_id, self.first_name,
-            self.last_name,self.username, self.chat_id)
+            self.last_name, self.username, self.chat_id)
 
 
 class ReminderData(Base):
