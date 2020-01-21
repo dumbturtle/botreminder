@@ -1,8 +1,11 @@
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer, String,
                         create_engine)
+from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from flask_login import UserMixin
+from webapp import user_login
 
 from settings import connect_settings
 
@@ -12,7 +15,7 @@ database_Session = sessionmaker(bind=database_engine)
 database_session = database_Session()
 
 
-class User(Base):
+class User(UserMixin, Base):
     """The class describes a database model for storing user data.
         id - Id in database
         telegramm_user_id - User ID in Telegramm
@@ -53,7 +56,7 @@ class ReminderData(Base):
     """
     __tablename__ = 'remainders'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, index=True)
+    user_id = Column(Integer, ForeignKey('users.telegramm_user_id'))
     comment = Column(String)
     date_remind = Column(DateTime)
     status = Column(String)
@@ -68,3 +71,8 @@ class ReminderData(Base):
         return "<Data {}, {}, {}, {}, {}>".format(
             self.id, self.user_id, self.comment,
             self.date_remind, self.status)
+
+
+@user_login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
