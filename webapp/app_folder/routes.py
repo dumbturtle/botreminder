@@ -1,11 +1,11 @@
-from flask import render_template, url_for, redirect, flash
+from flask import render_template, url_for, redirect, flash, request
 from flask_login import current_user, login_user
 
 from bothandlers.utils import get_information_about_user, reminder_list_from_database, reminders_list_message
 from database.modeldb import ReminderData, database_session, User
 
 from webapp import app  
-from webapp.app_folder.forms import UserIdForm
+from webapp.app_folder.forms import UserIdForm, UserKeyForm
 
 
 @app.route('/')
@@ -29,8 +29,19 @@ def login():
         return redirect(url_for('reminder'))
     form = UserIdForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(telegramm_user_id=form.userid.data).first()
+        user = database_session.query(User).filter(User.telegramm_user_id == form.userid.data).first()
+        print(user)
         if user is None:
-            flash('Нет такого пользователя')
-        return redirect(url_for('reminder'))
+            flash('No user')
+            return redirect(url_for('login'))
+        flash('Good')
+        return redirect(url_for('.loginkey', userid=user))
     return render_template('login.html', title='Login In', form=form)
+
+
+@app.route('/loginkey', methods= ['GET', 'POST'])
+def loginkey():
+    form = UserKeyForm()
+    userid = request.args.get('userid', None)
+    print(userid)
+    return render_template('loginkey.html', title='Key In', form=form)

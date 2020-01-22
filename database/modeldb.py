@@ -5,7 +5,8 @@ from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from flask_login import UserMixin
-from webapp import user_login
+
+#from webapp import login
 
 from settings import connect_settings
 
@@ -73,6 +74,6 @@ class ReminderData(Base):
             self.date_remind, self.status)
 
 
-@user_login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+# @login.user_loader
+# def load_user(id):
+#     return User.query.get(int(id))
