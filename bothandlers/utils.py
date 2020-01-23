@@ -1,5 +1,6 @@
 import calendar
 import logging
+import random
 import logging.config
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Union
@@ -317,3 +318,13 @@ def minute_remaining(reminder_user_data: Dict[str, str], step: int) -> int:
     except ValueError as error:
         logger.error(error)
         return 0
+
+def userkey() -> str:
+    """The function returns a key of 4 numbers.
+    :return: Returns a four digit number
+    """
+    first = random.randint(0,9)
+    second = random.randint(0,9)
+    third = random.randint(0,9)
+    fourth = random.randint(0,9)
+    return f'{first}{second}{third}{fourth}'

@@ -1,12 +1,11 @@
 
+from datetime import datetime
+
+from flask_login import UserMixin
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer, String,
                         create_engine)
-from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from flask_login import UserMixin
-
-#from webapp import login
 
 from settings import connect_settings
 
@@ -72,8 +71,3 @@ class ReminderData(Base):
         return "<Data {}, {}, {}, {}, {}>".format(
             self.id, self.user_id, self.comment,
             self.date_remind, self.status)
-
-
-# @login.user_loader
-# def load_user(id):
-#     return User.query.get(int(id))

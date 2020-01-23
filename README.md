@@ -41,7 +41,7 @@ DATABASE = "sqlite:///*.db" - путь к вашей базе данных SQLit
 3. Устанавливаем необходимые пакеты: pip install -r requirements.txt
 4. Копируем код с GitHub: https://github.com/dumbturtle/botreminder
 5. Настроить файл connect_settings.py
-6. Для старта системы необходимо запустить скрипт: ./start.sh
+6. Для старта системы необходимо запустить скрипт: start.py
 
 
 ## **Использование**
