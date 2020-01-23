@@ -9,7 +9,7 @@ from bothandlers.utils import (get_information_about_user,
                                reminders_list_message, userkey)
 from database.modeldb import ReminderData, User, database_session
 from reminderhandlers.reminds_handlers import sending_notification_reminder
-from webapp import app, login
+from webapp import app
 from webapp.app_folder.forms import UserIdForm, UserKeyForm
 
 # Global variables
@@ -20,7 +20,6 @@ key = 0
 @app.route('/index')
 def index():
     """Page processing function "/index"
-        
         If the user has registered on the site, he is redirected to the page with a reminder.
         If the user is not registered, a blank page is displayed.
     """
@@ -69,10 +68,10 @@ def logout():
 @app.route('/loginkey', methods=['GET', 'POST'])
 def loginkey():
     """Page processing function "/loginkey"
-        When you click "OK", the function 
-        checks the entered PIN code. If the 
-        PIN code is correct, then the user logs 
-        in and is redirected to the reminder page. 
+        When you click "OK", the function
+        checks the entered PIN code. If the
+        PIN code is correct, then the user logs
+        in and is redirected to the reminder page.
         If the pin code is wrong, an error message is displayed.
     """
     keyform = UserKeyForm()
