@@ -62,19 +62,19 @@ def check_date(redimnder_date: datetime)-> bool:
     return True if redimnder_date > today_date else False
 
 
-def get_information_about_user(telegramm_user_id: int)-> Optional[Dict[str, Union[str, int]]]:   
+def get_information_about_user(telegram_user_id: int)-> Optional[Dict[str, Union[str, int]]]:   
     """ Get information about user from database.
     
-    :param telegramm_user_id: Telegram user ID
+    :param telegram_user_id: Telegram user ID
     :return: Returns a dictionary with user data from a database
     """         
     information_from_database = database_session.query(
         User
     ).filter(
-        User.telegramm_user_id == telegramm_user_id
+        User.telegram_user_id == telegram_user_id
     ).first()
     if information_from_database is not None:
-        information_about_user = {'telegramm_user_id' : information_from_database.telegramm_user_id,
+        information_about_user = {'telegram_user_id' : information_from_database.telegram_user_id,
                                   'first_name' : information_from_database.first_name,
                                   'last_name' : information_from_database.last_name,
                                   'username' : information_from_database.username,
@@ -83,56 +83,56 @@ def get_information_about_user(telegramm_user_id: int)-> Optional[Dict[str, Unio
         return information_about_user
 
 
-def add_user_to_database(telegramm_user_id: int, first_name: str, last_name: str, username: str, chat_id: int) -> bool:
+def add_user_to_database(telegram_user_id: int, first_name: str, last_name: str, username: str, chat_id: int) -> bool:
     """Add a new user to the database.
      
-    :param telegramm_user_id: Telegram user ID.
+    :param telegram_user_id: Telegram user ID.
     :param first_name: User Name
     :param last_name: User Surname
-    :param username: Login in Telegramm
-    :param chat_id: User telegramm chat ID 
+    :param username: Login in Telegram
+    :param chat_id: User telegram chat ID 
     :return: If the user is not in the database, then add the user to the database. If adding a user to 
              the database was successful, return True. If adding a user to the database was not successful, return False.
     """
-    if get_information_about_user(telegramm_user_id) is not None:
+    if get_information_about_user(telegram_user_id) is not None:
         return False
-    information_about_user = User(telegramm_user_id, first_name, 
+    information_about_user = User(telegram_user_id, first_name, 
                                   last_name, username, chat_id)
     database_session.add(information_about_user)
     
     return try_to_commit(database_session)
     
 
-def delete_user_from_database(telegramm_user_id: int) -> bool:
+def delete_user_from_database(telegram_user_id: int) -> bool:
     """Delete user from database.
     
     User removed from database, return True
     An error occurred while deleting, return False
     If no user in database, return string 'NO USER'.
     
-    :param telegramm_user_id: Telegram user ID
+    :param telegram_user_id: Telegram user ID
     :return:  If the user deletion from the database is successful, 
               returns True. If no user in database or an error 
               occurred while deleting, returns False.
 
     """
-    if get_information_about_user(telegramm_user_id) is None:
+    if get_information_about_user(telegram_user_id) is None:
         return False
     database_session.query(
         User
     ).filter(
-        User.telegramm_user_id == telegramm_user_id
+        User.telegram_user_id == telegram_user_id
     ).delete()
     
     return try_to_commit(database_session)
 
-def reminder_add_new_to_database(telegramm_user_id: int, comment: str, date_remind: datetime, status: str) -> bool:
+def reminder_add_new_to_database(telegram_user_id: int, comment: str, date_remind: datetime, status: str) -> bool:
     """Adding a new reminder to the database.
     
     If reminder add to database, returned True.
     If an error occurred while add reimnder to database, return False.
 
-    :param telegramm_user_id: Telegram user ID
+    :param telegram_user_id: Telegram user ID
     :param comment: User comment on reminder.
     :param date_remind: Date reminder
     :param status: Reminder status(Active/Deactive)
@@ -143,7 +143,7 @@ def reminder_add_new_to_database(telegramm_user_id: int, comment: str, date_remi
     user_id = database_session.query(
         User.id
     ).filter(
-        User.telegramm_user_id == telegramm_user_id
+        User.telegram_user_id == telegram_user_id
     ).first()
     information_about_reminder = ReminderData(
         user_id[0], comment, date_remind, status)
@@ -152,10 +152,10 @@ def reminder_add_new_to_database(telegramm_user_id: int, comment: str, date_remi
     return try_to_commit(database_session)
 
 
-def reminder_list_from_database(telegramm_user_id: int) -> List[Optional[Dict[str, Union[str, int, datetime]]]]:
+def reminder_list_from_database(telegram_user_id: int) -> List[Optional[Dict[str, Union[str, int, datetime]]]]:
     """Returns a list of user reminders.
 
-    :param telegramm_user_id: Telegram user ID
+    :param telegram_user_id: Telegram user ID
     :return: If there are reminders in the database, the list
              with dict of user reminders is returned; if there are no 
              reminders, it is returned None.
@@ -163,7 +163,7 @@ def reminder_list_from_database(telegramm_user_id: int) -> List[Optional[Dict[st
     user_id = database_session.query(
         User.id
     ).filter(
-        User.telegramm_user_id == telegramm_user_id
+        User.telegram_user_id == telegram_user_id
     ).first()
     list_reminder_database = database_session.query(
         ReminderData

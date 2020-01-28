@@ -27,11 +27,11 @@ def check_time_reminder() -> None:
     for reminder in reminders_list:
         logger.info("Проверено напоминание: {}-{}-{}".format(reminder.user_id, reminder.date_remind, reminder.comment))
         if reminder.date_remind.strftime("%d-%m-%Y %H:%M") == ((datetime.now() + timedelta(hours=3)).strftime("%d-%m-%Y %H:%M")):
-            sending_notification_reminder(reminder.user_id, reminder.date_remind, reminder.comment)
+            send_notification_reminder(reminder.user_id, reminder.date_remind, reminder.comment)
             change_reminder_status(reminder.id)
 
 
-def sending_notification_reminder(user_id: int, reminder_date: datetime, comment: str) -> None:
+def send_notification_reminder(user_id: int, reminder_date: datetime, comment: str) -> None:
     """The function sends a message with reminder to the user.
     """
     user_information = database_session.query(

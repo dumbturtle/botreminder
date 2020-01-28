@@ -18,23 +18,23 @@ database_session = database_Session()
 class User(UserMixin, Base):
     """The class describes a database model for storing user data.
         id - Id in database
-        telegramm_user_id - User ID in Telegramm
+        telegram_user_id - User ID in Telegram
         first_name - First name of the user
         last_name - Last name of the user
-        username - Username in Telegramm
-        chat_id - User Chat ID in Telegramm
+        username - Username in Telegram
+        chat_id - User Chat ID in Telegram
     """
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    telegramm_user_id = Column(Integer)
+    telegram_user_id = Column(Integer)
     first_name = Column(String)
     last_name = Column(String)
     username = Column(String)
     chat_id = Column(Integer)
 
-    def __init__(self, telegramm_user_id, first_name, last_name, username,
+    def __init__(self, telegram_user_id, first_name, last_name, username,
                  chat_id):
-        self.telegramm_user_id = telegramm_user_id
+        self.telegram_user_id = telegram_user_id
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
@@ -42,7 +42,7 @@ class User(UserMixin, Base):
 
     def __repr__(self):
         return "<User {}, {}, {}, {}, {}, {}>".format(
-            self.id, self.telegramm_user_id, self.first_name,
+            self.id, self.telegram_user_id, self.first_name,
             self.last_name, self.username, self.chat_id)
 
 
@@ -56,7 +56,7 @@ class ReminderData(Base):
     """
     __tablename__ = 'remainders'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.telegramm_user_id'))
+    user_id = Column(Integer, ForeignKey('users.telegram_user_id'))
     comment = Column(String)
     date_remind = Column(DateTime)
     status = Column(String)

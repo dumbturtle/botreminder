@@ -20,4 +20,4 @@ def load_user(user_id):
     return database_session.query(User).filter(User.id == user_id).first()
 
 
-from webapp.app_folder import routes
+from webapp.app import routes
