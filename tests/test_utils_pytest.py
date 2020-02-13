@@ -9,15 +9,15 @@ from bothandlers.utils import (add_user_to_database, check_date, convert_date,
                                minute_remaining, month_remaining)
 
 #Variables
-telegramm_user_id = 1111
-wrong_telegramm_user_id = 2222
-wrong_format_telegramm_user_id = 'sdsds'
+telegram_user_id = 1111
+wrong_telegram_user_id = 2222
+wrong_format_telegram_user_id = 'sdsds'
 first_name = 'Test_name'
 last_name = 'Test_surname'
 username = 'Test_nickname'
 chat_id = 1111
 
-user_in_database = {'telegramm_user_id': telegramm_user_id, 
+user_in_database = {'telegram_user_id': telegram_user_id, 
                     'first_name': first_name, 
                     'last_name': last_name, 
                     'username': username, 
@@ -81,7 +81,7 @@ class TestBotHandlersWorkWithUser:
     def user_add_before(self):
         """The user is added before the start of the verification.
         """
-        if add_user_to_database(telegramm_user_id, first_name, last_name, username, chat_id):
+        if add_user_to_database(telegram_user_id, first_name, last_name, username, chat_id):
             print("User for testing added")
         else:
             print("Error")
@@ -91,7 +91,7 @@ class TestBotHandlersWorkWithUser:
     def user_delete_before(self):
         """The user is deleted before the start of the verification.
         """
-        if delete_user_from_database(telegramm_user_id):
+        if delete_user_from_database(telegram_user_id):
             print("User for testing deleted")
         else:
             print("Error")
@@ -102,7 +102,7 @@ class TestBotHandlersWorkWithUser:
         """The user is added after the verification.
         """
         yield
-        if add_user_to_database(telegramm_user_id, first_name, last_name, username, chat_id):
+        if add_user_to_database(telegram_user_id, first_name, last_name, username, chat_id):
             print("User for testing added")
         else:
             print("Error")
@@ -113,7 +113,7 @@ class TestBotHandlersWorkWithUser:
         """The user is deleted after the verification.
         """
         yield
-        if delete_user_from_database(telegramm_user_id):
+        if delete_user_from_database(telegram_user_id):
             print("User for testing deleted")
         else:
             print("Error")
@@ -123,28 +123,28 @@ class TestBotHandlersWorkWithUser:
         """Testing adding a user to the database. 
            If the user is added without errors, the function returns True.
         """
-        assert add_user_to_database(telegramm_user_id, first_name, last_name, username, chat_id) == True
+        assert add_user_to_database(telegram_user_id, first_name, last_name, username, chat_id) == True
 
 
     def test_delete_user_from_database(self, user_add_before):
         """Testing deleting a user from the database. 
            If the user is deleted without errors, the function returns True.
         """
-        assert delete_user_from_database(telegramm_user_id) == True
+        assert delete_user_from_database(telegram_user_id) == True
 
 
     def test_check_user_in_database_good(self, user_add_before, user_delete_after):
         """Testing the user presence in the database. 
            If such a user is in the database, the function returns True.
         """
-        assert get_information_about_user(telegramm_user_id) == user_in_database
+        assert get_information_about_user(telegram_user_id) == user_in_database
 
     
     def test_check_user_in_database_none(self):
         """Testing the user presence in the database. 
            If such a user is no in the database, the function returns None.
         """
-        assert get_information_about_user(wrong_telegramm_user_id) == None
+        assert get_information_about_user(wrong_telegram_user_id) == None
     
     
     def test_check_user_in_database_bad_request(self):
@@ -152,7 +152,7 @@ class TestBotHandlersWorkWithUser:
            If the error is in the format or username, 
            the function returns None.
         """
-        assert get_information_about_user(wrong_format_telegramm_user_id) == None
+        assert get_information_about_user(wrong_format_telegram_user_id) == None
 
 
 class TestBotHandlersTimeRemaining:

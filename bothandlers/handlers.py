@@ -81,6 +81,15 @@ def unjoin_user(bot: Bot, update: Update, user_data: dict) -> Message:
         
     update.message.reply_text(text_message, reply_markup=starting_keyboard())
 
+def send_userid_user(bot: Bot, update: Update, user_data: dict) -> Message:
+    """The function is sending Telegram User Id to user.
+    :param bot: Bot
+    :param update: Update
+    :param user_data: User data
+    :return: Message with UserID sending to the User. 
+    """
+    text_message = settings.USERID_MESSAGE.format(update.effective_user.id)
+    update.message.reply_text(text_message, reply_markup=reminder_keyboard())
 
 def reminder_add(bot: Bot, update: Update, user_data: dict) -> str:
     """Initial function to create a reminder.

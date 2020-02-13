@@ -23,7 +23,7 @@ def reminder_keyboard() -> ReplyKeyboardMarkup:
     :param: No
     :return: Reply Keyboard Markup
     """ 
-    work_keyboard = ReplyKeyboardMarkup([['Добавить напоминание', 'Список напоминаний', 'Удалить напоминание', 'Расхотел']], resize_keyboard=True)
+    work_keyboard = ReplyKeyboardMarkup([['Добавить напоминание', 'Список напоминаний', 'Удалить напоминание'],['Отправить UserID','Расхотел']], resize_keyboard=True)
     
     return work_keyboard
 

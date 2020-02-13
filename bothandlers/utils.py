@@ -319,7 +319,7 @@ def minute_remaining(reminder_user_data: Dict[str, str], step: int) -> int:
         logger.error(error)
         return 0
 
-def userkey() -> str:
+def user_key() -> str:
     """The function returns a key of 4 numbers.
     :return: Returns a four digit number
     """

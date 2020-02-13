@@ -37,7 +37,7 @@ def send_notification_reminder(user_id: int, reminder_date: datetime, comment: s
     user_information = database_session.query(
         User
     ).filter(
-        User.telegramm_user_id == user_id
+        User.telegram_user_id == user_id
     ).first()
     bot_proxy = utils.request.Request(proxy_url=connect_settings.PROXY, urllib3_proxy_kwargs=connect_settings.PROXY_ACCOUNT)
     reminder_bot = Bot(token=connect_settings.API_KEY, request=bot_proxy)

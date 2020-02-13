@@ -12,7 +12,8 @@ from bothandlers.handlers import (dontknow, greet_user, join_user, logger,
                                   reminder_commit_for_delete,
                                   reminder_confirm_for_delete,
                                   reminder_deleting_list, reminder_list,
-                                  reminder_skip_comment, unjoin_user)
+                                  reminder_skip_comment, send_userid_user,
+                                  unjoin_user)
 from settings import connect_settings, settings
 
 
@@ -79,6 +80,7 @@ def botmain() -> None:
     dp.add_handler(RegexHandler('^(Хочу пользоваться!)$',join_user, pass_user_data=True))
     dp.add_handler(RegexHandler('^(Расхотел)$', unjoin_user, pass_user_data=True))
     dp.add_handler(RegexHandler('^(Список напоминаний)$', reminder_list, pass_user_data=True))
+    dp.add_handler(RegexHandler('^(Отправить UserID)$', send_userid_user, pass_user_data=True))
     dp.add_handler(MessageHandler(Filters.text, dontknow, pass_user_data=True))
     mybot.start_polling()
     mybot.idle()

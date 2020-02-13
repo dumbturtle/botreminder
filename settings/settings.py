@@ -20,6 +20,7 @@ ADD_ERROR = 'Ошибка:('
 REMOVE_USER = 'Вас больше нет в базе!'
 NO_USER = 'Нет такого пользователя:('
 ALREADY_EXISTS_USER = '{}, уже есть!'
+USERID_MESSAGE = 'Ваш UserID: {}'
 REMINDER_STATUS_ON_ADD = 'active'
 TRUE_COMMIT_STATUS = 'True'
 

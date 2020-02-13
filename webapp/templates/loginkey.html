@@ -6,6 +6,9 @@
     <input type="hidden" name="index" value="ok">
     {{ form.userkey.label }}<br>
     {{ form.userkey(size=32) }}
+    {% for error in form.userkey.errors %}
+    {{ error }}
+    {% endfor %}
     {{ form.submit() }}
 </form>
 

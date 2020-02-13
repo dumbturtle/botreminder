@@ -1,15 +1,16 @@
 from datetime import datetime
 
+from flask import current_app as app
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 from bothandlers.utils import (get_information_about_user,
                                reminder_list_from_database,
-                               reminders_list_message, userkey)
+                               reminders_list_message, user_key)
 from database.modeldb import ReminderData, User, database_session
 from reminderhandlers.reminds_handlers import send_notification_reminder
-from webapp import app, login
+from webapp import login
 from webapp.app.forms import UserIdForm, UserKeyForm
 
 # Global variables
@@ -24,6 +25,7 @@ def index():
     If the user has registered on the site, he is redirected to the page with a reminder.
     If the user is not registered, a blank page is displayed.
     """
+
     if current_user.is_authenticated:
         telegram_user_id = database_session.query(User.telegram_user_id).filter(
             User.id == current_user.get_id()).first()
@@ -32,7 +34,7 @@ def index():
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login() -> render_template:
     """Page processing function "/login"
     
     If the user is registered, he is immediately redirected to the page with reminders.
@@ -42,28 +44,35 @@ def login():
     Redirected to the key entry page.
     """
     form = UserIdForm()
-    user = database_session.query(User).filter(
-        User.telegram_user_id == form.userid.data).first()
+
     if current_user.is_authenticated:
-        return redirect(url_for('reminder', userid=user.telegram_user_id))
+        telegram_user_id = database_session.query(User.telegram_user_id).filter(
+            User.id == current_user.get_id()).first()
+        return redirect(url_for('reminder', userid=telegram_user_id))
+
     if form.validate_on_submit():
+        user = database_session.query(User).filter(
+            User.telegram_user_id == form.userid.data).first()
         if user is None:
-            flash('No user')
+            flash("No Id")
             return redirect(url_for('login'))
-        USER_KEY_FROM_MESSAGE = userkey()
-        usertext = f'Выш код для входа: {USER_KEY_FROM_MESSAGE}'
+        USER_KEY_FROM_MESSAGE = user_key()
+        user_text = f'Выш код для входа: {USER_KEY_FROM_MESSAGE}'
         send_notification_reminder(
-            user.telegram_user_id, datetime.now(), usertext)
+            user.telegram_user_id, datetime.now(), user_text)
         return redirect(url_for('loginkey', userid=user.telegram_user_id))
     return render_template('login.html', title='Login In', form=form)
 
 
 @app.route('/logout')
-def logout():
+def logout() -> redirect:
     """Page processing function "/logout"
     
     User Logout Function
     """
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
+
     logout_user()
     return redirect(url_for('index'))
 
@@ -79,13 +88,24 @@ def loginkey():
     If the pin code is wrong, an error message is displayed.
     """
     keyform = UserKeyForm()
-    userid = request.args.get('userid', None)
+
+    if current_user.is_authenticated:
+        telegram_user_id = database_session.query(User.telegram_user_id).filter(
+            User.id == current_user.get_id()).first()
+        return redirect(url_for('reminder', userid=telegram_user_id))
+    
+    user_id = request.args.get('userid', None)
+
+    if user_id is None:
+        flash('No UserId')
+        return redirect(url_for('login'))
+    
     user = database_session.query(User).filter(
-        User.telegram_user_id == userid).first()
+        User.telegram_user_id == user_id).first()
     if keyform.validate_on_submit():
         keyform.userkey.data == str(USER_KEY_FROM_MESSAGE)
         login_user(user)
-        return redirect(url_for('reminder', userid=userid))
+        return redirect(url_for('reminder', userid=user_id))
     flash('Error PIN Code')
     return render_template('loginkey.html', title='Key In', form=keyform)
 
@@ -98,9 +118,12 @@ def reminder():
     The function, based on the user ID, requests 
     reminders from the data.
     """
-    if current_user.is_authenticated:
-        userid = request.args.get('userid', None)
-        user_info = get_information_about_user(userid)
-        list_reminders = reminder_list_from_database(userid)
-        return render_template('reminder.html', title='List Reminder', reminder_list=list_reminders, user_info=user_info)
-    return redirect(url_for('index'))
+    userid = request.args.get('userid', None)
+
+    if userid is None:
+        userid = database_session.query(User.telegram_user_id).filter(
+            User.id == current_user.get_id()).first()
+    user_info = get_information_about_user(userid)
+    list_reminders = reminder_list_from_database(userid)
+    return render_template('reminder.html', title='List Reminder', reminder_list=list_reminders, user_info=user_info)
+    

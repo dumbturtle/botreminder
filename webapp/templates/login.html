@@ -7,6 +7,9 @@
         <p>
             {{ form.userid.label }}<br>
             {{ form.userid(size=32) }}
+     		{% for error in form.userid.errors %}
+            {{ error }}
+            {% endfor %}
         </p>
         <p>{{ form.submit() }}</p>
     </form>

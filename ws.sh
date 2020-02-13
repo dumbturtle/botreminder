@@ -1,2 +1,3 @@
 #!/bin/bash
-FLASK_APP=webapp.py FLASK_ENV=development flask run --host=0.0.0.0
+python start.py&
+python startwebapp.py
