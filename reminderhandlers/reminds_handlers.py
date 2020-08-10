@@ -26,7 +26,7 @@ def check_time_reminder() -> None:
     
     for reminder in reminders_list:
         logger.info("Проверено напоминание: {}-{}-{}".format(reminder.user_id, reminder.date_remind, reminder.comment))
-        if reminder.date_remind.strftime("%d-%m-%Y %H:%M") == ((datetime.now() + timedelta(hours=3)).strftime("%d-%m-%Y %H:%M")):
+        if reminder.date_remind.strftime("%d-%m-%Y %H:%M") == ((datetime.now() + timedelta(hours=0)).strftime("%d-%m-%Y %H:%M")):
             sending_notification_reminder(reminder.user_id, reminder.date_remind, reminder.comment)
             change_reminder_status(reminder.id)
 
@@ -37,10 +37,9 @@ def sending_notification_reminder(user_id: int, reminder_date: datetime, comment
     user_information = database_session.query(
         User
     ).filter(
-        User.telegramm_user_id == user_id
+        User.id == user_id
     ).first()
-    bot_proxy = utils.request.Request(proxy_url=connect_settings.PROXY, urllib3_proxy_kwargs=connect_settings.PROXY_ACCOUNT)
-    reminder_bot = Bot(token=connect_settings.API_KEY, request=bot_proxy)
+    reminder_bot = Bot(token=connect_settings.API_KEY)
     message_text = settings.REMIND_MESSAGE_TEXT.format(reminder_date, comment)
     reminder_bot.sendMessage(chat_id=user_information.chat_id, text=message_text)
 

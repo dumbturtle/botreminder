@@ -1,5 +1,4 @@
 API_KEY = ''
-PROXY = {'proxy_url': '','urllib3_proxy_kwargs': {'username': '', 'password': ''}}
-PROXY_REMINDS_HANDLERS_PROXY = ''
-PROXY_REMINDS_HANDLERS_ACCOUNT = {"username": "", "password": ""}
 DATABASE = "sqlite:///database/bot_db.db"
+
+WEB_APP = 'SECRET_KEY'

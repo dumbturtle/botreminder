@@ -27,4 +27,6 @@ test.py
 !logging.cfg
 .theia/
 .python-version
+bot.log
+remind.log
 
