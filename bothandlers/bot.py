@@ -20,7 +20,7 @@ def botmain() -> None:
     """The main function for processing messages from the user.
 
     """
-    mybot = Updater(connect_settings.API_KEY, request_kwargs={'proxy_url': connect_settings.PROXY, 'urllib3_proxy_kwargs': connect_settings.PROXY_ACCOUNT})
+    mybot = Updater(connect_settings.API_KEY)
     dp = mybot.dispatcher
     logger.info(settings.BOT_RUN)
     reminder_create = ConversationHandler(
